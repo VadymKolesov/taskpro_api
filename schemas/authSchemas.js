@@ -21,4 +21,4 @@ const updateThemeSchema = Joi.object({
     theme: Joi.string().valid("dark", "light", "violet").required()
 });
 
-export default { registerUserSchema, loginUserSchema, updateUserSchema, updateAvatarSchema, updateThemeSchema }
+export default { registerUserSchema, loginUserSchema, updateUserSchema, updateThemeSchema }
