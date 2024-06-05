@@ -17,10 +17,6 @@ const updateUserSchema = Joi.object({
     password: Joi.string().min(8)
 }).min(1);
 
-const updateAvatarSchema = Joi.object({
-    avatarUrl: Joi.string().required()
-});
-
 const updateThemeSchema = Joi.object({
     theme: Joi.string().valid("dark", "light", "violet").required()
 });
