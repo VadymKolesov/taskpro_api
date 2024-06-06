@@ -8,7 +8,7 @@ import jwt from 'jsonwebtoken';
 
 
 export const registerUser = controllerDecorator(async (req, res, next) => {
-    const { email, password } = req.body;
+    const { email, password, name } = req.body;
     const emailInToLowerCase = email.toLowerCase();
     const existUser = await User.findOne({ email: emailInToLowerCase });
 
@@ -17,17 +17,14 @@ export const registerUser = controllerDecorator(async (req, res, next) => {
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
-    const verificationToken = nanoid();
-    const avatarURL = gravatar.url(emailInToLowerCase, { s: "250", r: "pg", d: "mm" }, true);
 
     const newUser = await User.create({
         email: emailInToLowerCase,
-        password: passwordHash,
-        avatarURL,
-        verificationToken
+        password: passwordHash, 
+        name,
     });
 
-    res.status(201).json({ user: { email: newUser.email, theme: newUser.theme } });
+    res.status(201).json({ user: { email: newUser.email, theme: newUser.theme, name:newUser.name } });
 });
 
 export const loginUser = controllerDecorator(async (req, res, next) => {
@@ -36,7 +33,7 @@ export const loginUser = controllerDecorator(async (req, res, next) => {
     const existUser = await User.findOne({ email: emailInToLowerCase });
 
     if (!existUser) {
-        throw HttpError(401, "Email not found");
+        throw HttpError(401, "Email or password is wrong");
     }
 
     const isMatch = await bcrypt.compare(password, existUser.password);
@@ -44,24 +41,25 @@ export const loginUser = controllerDecorator(async (req, res, next) => {
         throw HttpError(401, "Email or password is wrong");
     }
 
-    const token = jwt.sign({ id: existUser._id }, process.env.JWT_SECRET, {
-        expiresIn: "1h",
-    });    /// !!!!! jwt secret key
+    const token = jwt.sign({ id: existUser._id }, process.env.SECRET_KEY, {
+        expiresIn: "48h",
+    });   
 
-    await User.findOneAndUpdate({ email: emailInToLowerCase }, { token });
+    await User.findByIdAndUpdate(existUser._id, { token });
 
-    res.status(200).json({ user: { email: existUser.email, theme: existUser.theme }, token });
+    res.status(200).json({ token, user: { email: existUser.email, theme: existUser.theme, name: existUser.name }});
 });
 
 export const logoutUser = controllerDecorator(async (req, res) => {
-    const { id } = req.user;
-    const updatedUser = await User.findByIdAndUpdate(id, { token: null }, { new: true });
-
-    if (!updatedUser) {
+    const { _id: id } = req.user;
+    const user = await User.findById(id);
+    if (!user) {
         throw HttpError(404, "User not found");
     }
 
-    res.sendStatus(204);
+    await User.findByIdAndUpdate(id, {token: null});
+
+    res.sendStatus(204).end();
 });
 
 export const getCurrentUser = controllerDecorator(async (req, res, next) => {
@@ -109,6 +107,8 @@ export const updateUserTheme = controllerDecorator(async (req, res, next) => {
   
     res.status(200).json(user);
 });
+
+
 
 
 
