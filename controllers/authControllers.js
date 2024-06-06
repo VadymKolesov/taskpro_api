@@ -12,7 +12,7 @@ export const registerUser = controllerDecorator(async (req, res, next) => {
     const emailInToLowerCase = email.toLowerCase();
     const existUser = await User.findOne({ email: emailInToLowerCase });
 
-    if (existUser !== null) {
+    if (existUser) {
         throw HttpError(409, "Email is in use");
     }
 
@@ -84,6 +84,31 @@ export const updateUserTheme = controllerDecorator(async (req, res, next) => {
     res.status(200).json("User change theme");
     }
   );
+
+  export const updateUser = controllerDecorator(async(req, res, next) =>{
+    if (!req.body || Object.keys(req.body).length === 0) {
+        throw HttpError(400, "Body must have at least one field");
+      }
+    const { id } = req.params; 
+    const { _id: owner } = req.user; 
+
+    const { name, email, password } = req.body;
+    const updateData = {};
+    if (name) updateData.name = name;
+    if (email) updateData.email = email;
+    if (password) {
+        const passwordSalt = await bcrypt.genSalt(10);
+        updateData.password = await bcrypt.hash(password, passwordSalt);
+      }
+
+    const user = await User.findOneAndUpdate({ _id: id, owner }, updateData, { new: true });
+
+    if (!user) {
+    throw HttpError(404, "Not found");
+    }
+  
+    res.status(200).json(user);
+});
 
 
 
