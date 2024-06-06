@@ -2,8 +2,6 @@ import controllerDecorator from "../helpers/controllerDecorator.js";
 import User from "../models/user.js"; 
 import HttpError from "../helpers/HttpError.js";
 import bcrypt from 'bcrypt';
-import { nanoid } from 'nanoid';
-import gravatar from 'gravatar';
 import jwt from 'jsonwebtoken';
 
 
@@ -22,6 +20,7 @@ export const registerUser = controllerDecorator(async (req, res, next) => {
         email: emailInToLowerCase,
         password: passwordHash, 
         name,
+        avatarUrl
     });
 
     res.status(201).json({ user: { email: newUser.email, theme: newUser.theme, name:newUser.name } });
@@ -63,15 +62,13 @@ export const logoutUser = controllerDecorator(async (req, res) => {
 });
 
 export const getCurrentUser = controllerDecorator(async (req, res, next) => {
-    const { email, theme } = req.user;
-    res.json({ email, theme });
+    const { email, name, avatarUrl, theme } = req.user;
+    res.json({ email, name, avatarUrl, theme });
 });
 
 export const updateUserTheme = controllerDecorator(async (req, res, next) => {
-    const { id } = req.params;
+    const { id } = req.user;
     const { theme } = req.body;
-
-    console.log(theme);
 
     const user = await User.findByIdAndUpdate(id , {theme});
     if (!user) {
@@ -79,14 +76,11 @@ export const updateUserTheme = controllerDecorator(async (req, res, next) => {
     } else if( theme === user.theme){
         throw HttpError(409, "User alredy use this theme")
     }
-    res.status(200).json("User change theme");
+    res.status(200).json("User theme changed");
     }
   );
 
   export const updateUser = controllerDecorator(async(req, res, next) =>{
-    if (!req.body || Object.keys(req.body).length === 0) {
-        throw HttpError(400, "Body must have at least one field");
-      }
     const { id } = req.params; 
     const { _id: owner } = req.user; 
 
