@@ -1,0 +1,330 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "version": "0.0.1",
+    "title": "TaskPro API",
+    "description": "Tasks manage app"
+  },
+  "consumes": ["application/json", "multipart/form-data"],
+  "produces": ["application/json"],
+  "servers": [{ "url": "" }],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Authorization endpoints"
+    }
+  ],
+  "paths": {
+    "api/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "User login",
+        "requestBody": {
+          "description": "Login request body",
+          "required": "true",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid email or password",
+            "content": {}
+          }
+        }
+      }
+    },
+    "api/auth/register": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "User register",
+        "requestBody": {
+          "description": "Register request body",
+          "required": "true",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Email already in use",
+            "content": {}
+          }
+        }
+      }
+    },
+    "api/auth/logout": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "User logout",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "204": {
+            "description": "Successful operation",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "User not found",
+            "content": {}
+          }
+        }
+      }
+    },
+    "api/auth/current": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Get current user",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CurrentResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          }
+        }
+      }
+    },
+    "api/auth/theme": {
+      "put": {
+        "tags": ["Auth"],
+        "summary": "Update user's theme",
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Update user's theme request body",
+          "required": "true",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateThemeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateThemeResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {}
+          },
+          "404": {
+            "description": "User not found",
+            "content": {}
+          },
+          "409": {
+            "description": "User alredy use this theme",
+            "content": {}
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LoginRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password",
+            "example": "qwerty123"
+          }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "User's name",
+                "example": "User"
+              },
+              "email": {
+                "type": "string",
+                "description": "User's email",
+                "format": "email"
+              },
+              "avatarUrl": {
+                "type": "string",
+                "description": "User's avatar url",
+                "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
+              },
+              "theme": {
+                "type": "string",
+                "description": "User's theme",
+                "example": "dark"
+              }
+            }
+          },
+          "token": {
+            "type": "string",
+            "description": "User's jwt token",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+          }
+        }
+      },
+      "RegisterRequest": {
+        "type": "object",
+        "required": ["name", "email", "password"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "User's name",
+            "example": "User"
+          },
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password",
+            "example": "qwerty123"
+          }
+        }
+      },
+      "RegisterResponse": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "User's name",
+                "example": "User"
+              },
+              "email": {
+                "type": "string",
+                "description": "User's email",
+                "format": "email"
+              },
+              "avatarUrl": {
+                "type": "string",
+                "description": "User's avatar url",
+                "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
+              },
+              "theme": {
+                "type": "string",
+                "description": "User's theme",
+                "example": "dark"
+              }
+            }
+          }
+        }
+      },
+      "CurrentResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "User's name",
+            "example": "User"
+          },
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          },
+          "avatarUrl": {
+            "type": "string",
+            "description": "User's avatar url",
+            "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
+          },
+          "theme": {
+            "type": "string",
+            "description": "User's theme",
+            "example": "dark"
+          }
+        }
+      },
+      "UpdateThemeRequest": {
+        "type": "object",
+        "required": ["theme"],
+        "properties": {
+          "theme": {
+            "type": "string",
+            "description": "User's new theme",
+            "example": "dark"
+          }
+        }
+      },
+      "UpdateThemeResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Successful operation",
+            "example": "User's theme changed"
+          }
+        }
+      }
+    },
+    "securitySchemas": {
+      "Bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

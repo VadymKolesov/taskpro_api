@@ -1,6 +1,8 @@
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
+import swaggerUi from "swagger-ui-express";
+import swaggerDocument from "./swagger.json" assert { type: "json" };
 import "dotenv/config";
 
 import authRouter from "./routes/authRouter.js";
@@ -14,6 +16,8 @@ app.use(express.json());
 
 app.use("/api/auth", authRouter);
 app.use("/api/boards", boardsRouter);
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use((_, res) => {
   res.status(404).json({ message: "Route not found" });
