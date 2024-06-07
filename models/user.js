@@ -31,6 +31,10 @@ const userSchema = new Schema(
         "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png",
       required: [true, "Avatar url is required"],
     },
+    isUpdatedAvatar: {
+      type: Boolean,
+      default: false,
+    },
     password: {
       type: String,
       required: [true, "Password is required"],
