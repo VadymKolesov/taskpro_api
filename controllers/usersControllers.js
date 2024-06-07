@@ -1,6 +1,7 @@
 import User from "../models/user.js";
 import controllerDecorator from "../helpers/controllerDecorator.js";
 import HttpError from "../helpers/HttpError.js";
+import { getAvatar } from "../helpers/getAvatar.js";
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs/promises";
 
@@ -14,14 +15,17 @@ export const updateUserTheme = controllerDecorator(async (req, res) => {
     throw HttpError(409, "User alredy use this theme");
   }
 
+  const avatarUrl = user.isUpdatedAvatar ? user.avatarUrl : getAvatar(theme);
+
   const updatedUser = await User.findByIdAndUpdate(
     _id,
-    { theme },
+    { theme, avatarUrl },
     { new: true }
   );
 
   res.status(200).json({
     theme: updatedUser.theme,
+    avatarUrl: updatedUser.avatarUrl,
   });
 });
 
@@ -66,7 +70,7 @@ export const updateAvatar = controllerDecorator(async (req, res) => {
 
   const updatedUser = await User.findByIdAndUpdate(
     _id,
-    { avatarUrl: avatar.secure_url },
+    { avatarUrl: avatar.secure_url, isUpdatedAvatar: true },
     { new: true }
   );
 
