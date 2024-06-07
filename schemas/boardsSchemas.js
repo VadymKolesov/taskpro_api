@@ -16,11 +16,6 @@ const editBoard = Joi.object({
   backgroundUrl: Joi.string(),
 }).min(1);
 
-const needHelp = Joi.object({
-  email: Joi.email().required(),
-  comment: Joi.string().max(100).required(),
-});
-
 // const newCard = Joi.object({
 //   title: Joi.string().max(30).required().label("Title").messages({
 //     "any.required": "Title is required.",
@@ -49,4 +44,4 @@ const needHelp = Joi.object({
 //   }),
 // }); // приміняти ї для editColumn
 
-export default { newBoard, editBoard, needHelp };
+export default { newBoard, editBoard };
