@@ -3,10 +3,12 @@ import User from "../models/user.js";
 import HttpError from "../helpers/HttpError.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import cloudinary from 'cloudinary';
+import multer from "multer";
 
 
 export const registerUser = controllerDecorator(async (req, res, next) => {
-    const { email, password, name } = req.body;
+    const { email, password, name, avatarUrl } = req.body;
     const emailInToLowerCase = email.toLowerCase();
     const existUser = await User.findOne({ email: emailInToLowerCase });
 
@@ -19,15 +21,19 @@ export const registerUser = controllerDecorator(async (req, res, next) => {
     const newUser = await User.create({
         email: emailInToLowerCase,
         password: passwordHash, 
-        name,
-        avatarUrl
+        name
     });
 
-    res.status(201).json({ user: { email: newUser.email, theme: newUser.theme, name:newUser.name } });
+    res.status(201).json({ user: { 
+        email: newUser.email,
+        theme: newUser.theme, 
+        name: newUser.name, 
+        avatarUrl: newUser.avatarUrl 
+    } });
 });
 
 export const loginUser = controllerDecorator(async (req, res, next) => {
-    const { email, password } = req.body;
+    const { email, password, name, avatarUrl } = req.body;
     const emailInToLowerCase = email.toLowerCase();
     const existUser = await User.findOne({ email: emailInToLowerCase });
 
@@ -46,7 +52,12 @@ export const loginUser = controllerDecorator(async (req, res, next) => {
 
     await User.findByIdAndUpdate(existUser._id, { token });
 
-    res.status(200).json({ token, user: { email: existUser.email, theme: existUser.theme, name: existUser.name }});
+    res.status(200).json({ token, user: { 
+        email: existUser.email, 
+        theme: existUser.theme, 
+        name: existUser.name,
+        avatarUrl: existUser.avatarUrl
+     }});
 });
 
 export const logoutUser = controllerDecorator(async (req, res) => {
@@ -80,10 +91,10 @@ export const updateUserTheme = controllerDecorator(async (req, res, next) => {
     }
   );
 
-  export const updateUser = controllerDecorator(async(req, res, next) =>{
-    const { id } = req.params; 
-    const { _id: owner } = req.user; 
-
+  export const updateUser = controllerDecorator(async ( req, res, next) =>{
+    const { id } = req.params;
+    const { _id: owner } = req.user;
+   
     const { name, email, password } = req.body;
     const updateData = {};
     if (name) updateData.name = name;
@@ -93,14 +104,63 @@ export const updateUserTheme = controllerDecorator(async (req, res, next) => {
         updateData.password = await bcrypt.hash(password, passwordSalt);
       }
 
-    const user = await User.findOneAndUpdate({ _id: id, owner }, updateData, { new: true });
+      const user = await User.findOneAndUpdate(
+        { _id: id, _id: owner },
+        updateData,
+        { new: true }
+      );
 
     if (!user) {
     throw HttpError(404, "Not found");
     }
   
-    res.status(200).json(user);
+    res.status(200).json("User data changed");
 });
+
+cloudinary.v2.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,  // "dwga7ej8q",
+    api_key: process.env.CLOUDINARY_API_KEY, // "677464844986138"
+    api_secret: process.env.CLOUDINARY_API_SECRET, // "Yndqj462rQZIjImJBmx4OVxbHSY"
+  });
+
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary.v2,
+    params: {
+      folder: 'avatars',
+      allowed_formats: ['jpg', 'png'],
+    },
+  });  
+
+const upload = multer({ storage });
+
+export const updateAvatar = controllerDecorator(async(req, res, next) =>{
+   
+    
+    if (!req.user) throw HttpError(401, "Not authorized");
+    if (!req.file) throw HttpError(400, "File not provided");
+
+    const { _id } = req.user;
+    const { path: tmpUpload, originalname } = req.file;
+
+    const result = await cloudinary.v2.uploader.upload(tmpUpload, {
+        folder: "avatars",
+        public_id: `${_id}_${originalname}`,
+        transformation: { width: 250, height: 250, crop: "fill" },
+    });
+
+    const avatarURL = result.secure_url;
+
+    const user = await User.findByIdAndUpdate(_id, { avatarUrl: avatarURL }, { new: true });
+
+    if (!user) {
+        throw HttpError(404, "User not found");
+    }
+
+    res.status(200).json({ avatarURL });
+
+        
+
+})
 
 
 
