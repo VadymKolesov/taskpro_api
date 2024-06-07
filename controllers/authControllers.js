@@ -7,6 +7,7 @@ import cloudinary from 'cloudinary';
 import multer from "multer";
 
 
+
 export const registerUser = controllerDecorator(async (req, res, next) => {
     const { email, password, name, avatarUrl } = req.body;
     const emailInToLowerCase = email.toLowerCase();
