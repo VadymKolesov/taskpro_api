@@ -13,23 +13,19 @@ const transporter = nodemailer.createTransport({
 });
 
 // Налаштування листа
-const sendMail = (req, res) => {
-  console.log(req.body);
+export const sendMail = (req, res) => {
   const userComment = req.body.comment; // Коментар користувача
   const userEmail = req.body.email; // Ємейл користувача
 
   const options = {
     from: userEmail,
     to: "taskpro.project@gmail.com",
-    text: `Коментар користувача: ${userComment}\nЕмейл для відповіді: ${userEmail}`,
+    text: `User's comment: ${userComment}\nUser's email: ${userEmail}`,
   };
 
   res.status(200).json({
-    mail: userEmail,
-    comment: userComment,
+    message: "Comment sent",
   });
 
   return transporter.sendMail(options);
 };
-
-export default { sendMail };

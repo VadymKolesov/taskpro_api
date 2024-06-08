@@ -1,3 +1,7 @@
+#tmp
+tmp/*
+!tmp/.gitkeep
+
 # Logs
 logs
 *.log

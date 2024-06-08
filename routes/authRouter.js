@@ -1,21 +1,22 @@
 import express from "express";
 import authenticate from "../middlewares/authenticate.js";
-import upload from "../middlewares/upload.js";
+import validateBody from "../middlewares/validateBody.js";
+import { registerUserSchema, loginUserSchema } from "../schemas/authSchemas.js";
+import {
+  loginUser,
+  registerUser,
+  getCurrentUser,
+  logoutUser,
+} from "../controllers/authControllers.js";
 
 const authRouter = express.Router();
 
-authRouter.post("/login"); // Login user
+authRouter.post("/login", validateBody(loginUserSchema), loginUser); // Login user
 
-authRouter.post("/register"); // Register user
+authRouter.post("/register", validateBody(registerUserSchema), registerUser); // Register user
 
-authRouter.post("/logout", authenticate); // Logout user
+authRouter.post("/logout", authenticate, logoutUser); // Logout user
 
-authRouter.get("/current", authenticate); // Get current user
-
-authRouter.patch("/", authenticate); // Update user (name / email / password)
-
-authRouter.patch("/avatar", authenticate, upload.single("avatar")); // Update user avatar
-
-authRouter.put("/theme", authenticate); // Update user theme
+authRouter.get("/current", authenticate, getCurrentUser); // Get current user
 
 export default authRouter;
