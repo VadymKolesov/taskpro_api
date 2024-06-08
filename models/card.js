@@ -20,10 +20,18 @@ const cardSchema = new Schema({
     default: false,
   },
   deadline: {
-    type: Number,
+    type: String,
     required: [true, "Deadline is required"],
   },
-});
+  columnId: {
+    type: Schema.Types.ObjectId,
+    ref: "column",
+  },
+  owner: {
+    type: Schema.Types.ObjectId,
+    ref: "user",
+  }
+}, { versionKey: false, timestamps: true });
 
 cardSchema.post("save", handleMongooseError);
 
