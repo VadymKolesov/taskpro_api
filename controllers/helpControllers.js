@@ -1,28 +1,35 @@
 import nodemailer from "nodemailer";
+import "dotenv/config";
 
-const { senderEmail, userComment } = req.body; // адреса відправника та текст хелпа
-
-const recipientLetter = "taskpro.project@gmail.com";
-
-// данні листа
-
-const mailOptions = {
-  from: senderEmail, // електронна адреса відправника
-  to: recipientLetter, // Електронний адрес отримувача тобто taskpro.project@gmail.com
-  text: userComment, // Текст листа - comment
-};
-
-//транспортер для відправки листа
+const { MAILTRAP_USERNAME, MAILTRAP_PASSWORD } = process.env;
+// Конфігурація транспорту для Mailtrap
 const transporter = nodemailer.createTransport({
+  host: "sandbox.smtp.mailtrap.io",
+  port: 2525,
   auth: {
-    user: senderEmail, // електронна адреса відправника
+    user: MAILTRAP_USERNAME,
+    pass: MAILTRAP_PASSWORD,
   },
 });
 
-// відпрака листа
+// Налаштування листа
+const sendMail = (req, res) => {
+  console.log(req.body);
+  const userComment = req.body.comment; // Коментар користувача
+  const userEmail = req.body.email; // Ємейл користувача
 
-const sendEmail = () => {
-  return transporter.sendMail(mailOptions);
+  const options = {
+    from: userEmail,
+    to: "taskpro.project@gmail.com",
+    text: `Коментар користувача: ${userComment}\nЕмейл для відповіді: ${userEmail}`,
+  };
+
+  res.status(200).json({
+    mail: userEmail,
+    comment: userComment,
+  });
+
+  return transporter.sendMail(options);
 };
 
-export default { sendEmail };
+export default { sendMail };
