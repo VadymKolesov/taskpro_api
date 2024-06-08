@@ -12,6 +12,14 @@
     {
       "name": "Auth",
       "description": "Authorization endpoints"
+    },
+    {
+      "name": "Users",
+      "description": "Users endpoints"
+    },
+    {
+      "name": "Boards",
+      "description": "Boards endpoints"
     }
   ],
   "paths": {
@@ -41,9 +49,11 @@
               }
             }
           },
+          "400": {
+            "description": "Bad request"
+          },
           "401": {
-            "description": "Invalid email or password",
-            "content": {}
+            "description": "Email or password is wrong"
           }
         }
       }
@@ -74,9 +84,11 @@
               }
             }
           },
+          "400": {
+            "description": "Bad request"
+          },
           "409": {
-            "description": "Email already in use",
-            "content": {}
+            "description": "Email already in use"
           }
         }
       }
@@ -88,16 +100,13 @@
         "security": [{ "Bearer": [] }],
         "responses": {
           "204": {
-            "description": "Successful operation",
-            "content": {}
+            "description": "Successful operation"
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {}
+            "description": "Unauthorized"
           },
           "404": {
-            "description": "User not found",
-            "content": {}
+            "description": "User not found"
           }
         }
       }
@@ -119,15 +128,53 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {}
+            "description": "Unauthorized"
           }
         }
       }
     },
-    "api/auth/theme": {
+    "api/users": {
+      "patch": {
+        "tags": ["Users"],
+        "summary": "Update user",
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Update user request body",
+          "required": "true",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateUserResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "api/users/theme": {
       "put": {
-        "tags": ["Auth"],
+        "tags": ["Users"],
         "summary": "Update user's theme",
         "security": [{ "Bearer": [] }],
         "requestBody": {
@@ -152,17 +199,230 @@
               }
             }
           },
+          "400": {
+            "description": "Bad request"
+          },
           "401": {
-            "description": "Unauthorized",
-            "content": {}
+            "description": "Unauthorized"
           },
           "404": {
-            "description": "User not found",
-            "content": {}
+            "description": "User not found"
           },
           "409": {
-            "description": "User alredy use this theme",
-            "content": {}
+            "description": "User alredy use this theme"
+          }
+        }
+      }
+    },
+    "api/users/avatar": {
+      "put": {
+        "tags": ["Users"],
+        "summary": "Update user's avatar",
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Update user's avatar request body",
+          "required": "true",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAvatarRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateAvatarResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Image is required"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "api/boards": {
+      "post": {
+        "tags": ["Boards"],
+        "summary": "Create new board",
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Create new board request body",
+          "required": "true",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBoardRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateBoardResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "get": {
+        "tags": ["Boards"],
+        "summary": "Get boards",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBoardsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "api/boards/:id": {
+      "get": {
+        "tags": ["Boards"],
+        "summary": "Get board details",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Board's id"
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBoardDetailsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Board not found"
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Boards"],
+        "summary": "Update board",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Board's id"
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Update board request body",
+          "required": "true",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBoardRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateBoardResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Board not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Boards"],
+        "summary": "Delete board",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Board's id"
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteBoardResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Board not found"
           }
         }
       }
@@ -275,6 +535,47 @@
       "CurrentResponse": {
         "type": "object",
         "properties": {
+          "user": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "User's name",
+                "example": "User"
+              },
+              "email": {
+                "type": "string",
+                "description": "User's email",
+                "format": "email"
+              },
+              "avatarUrl": {
+                "type": "string",
+                "description": "User's avatar url",
+                "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
+              },
+              "theme": {
+                "type": "string",
+                "description": "User's theme",
+                "example": "dark"
+              }
+            }
+          }
+        }
+      },
+      "UpdateUserRequest": {
+        "type": "object",
+        "oneOf": [
+          {
+            "required": ["name"]
+          },
+          {
+            "required": ["email"]
+          },
+          {
+            "required": ["password"]
+          }
+        ],
+        "properties": {
           "name": {
             "type": "string",
             "description": "User's name",
@@ -285,21 +586,47 @@
             "description": "User's email",
             "format": "email"
           },
-          "avatarUrl": {
+          "password": {
             "type": "string",
-            "description": "User's avatar url",
-            "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
-          },
-          "theme": {
-            "type": "string",
-            "description": "User's theme",
-            "example": "dark"
+            "description": "User's password",
+            "example": "qwerty123"
+          }
+        }
+      },
+      "UpdateUserResponse": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "User's name",
+                "example": "User"
+              },
+              "email": {
+                "type": "string",
+                "description": "User's email",
+                "format": "email"
+              },
+              "avatarUrl": {
+                "type": "string",
+                "description": "User's avatar url",
+                "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
+              },
+              "theme": {
+                "type": "string",
+                "description": "User's theme",
+                "example": "dark"
+              }
+            }
           }
         }
       },
       "UpdateThemeRequest": {
         "type": "object",
         "required": ["theme"],
+        "enum": ["dark", "light", "violet"],
         "properties": {
           "theme": {
             "type": "string",
@@ -311,10 +638,428 @@
       "UpdateThemeResponse": {
         "type": "object",
         "properties": {
+          "theme": {
+            "type": "string",
+            "description": "User's new theme",
+            "example": "dark"
+          },
+          "avatarUrl": {
+            "type": "string",
+            "description": "User's avatar",
+            "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
+          }
+        }
+      },
+      "UpdateAvatarRequest": {
+        "type": "object",
+        "required": ["avatar"],
+        "properties": {
+          "avatar": {
+            "type": "string",
+            "description": "User's new avatar",
+            "format": "binary"
+          }
+        }
+      },
+      "UpdateAvatarResponse": {
+        "type": "object",
+        "properties": {
+          "avatarUrl": {
+            "type": "string",
+            "description": "User's avatar",
+            "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
+          }
+        }
+      },
+      "CreateBoardRequest": {
+        "type": "object",
+        "required": ["name", "iconName", "backgroundUrl"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Board's name",
+            "example": "My board"
+          },
+          "iconName": {
+            "type": "string",
+            "enum": [
+              "icon-project-1",
+              "icon-project-2",
+              "icon-project-3",
+              "icon-project-4",
+              "icon-project-5",
+              "icon-project-6",
+              "icon-project-7",
+              "icon-project-8"
+            ],
+            "description": "The name of the icon attached to the board",
+            "format": "icon-project-1"
+          },
+          "backgroundUrl": {
+            "type": "string",
+            "description": "Board's Background",
+            "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
+          }
+        }
+      },
+      "CreateBoardResponse": {
+        "type": "object",
+        "properties": {
+          "type": "object",
+          "properties": {
+            "_id": {
+              "type": "string",
+              "description": "Board's id",
+              "example": "666441ca47f3118ab3b584c9"
+            },
+            "name": {
+              "type": "string",
+              "description": "Board's name",
+              "example": "My board"
+            },
+            "iconName": {
+              "type": "string",
+              "enum": [
+                "icon-project-1",
+                "icon-project-2",
+                "icon-project-3",
+                "icon-project-4",
+                "icon-project-5",
+                "icon-project-6",
+                "icon-project-7",
+                "icon-project-8"
+              ],
+              "description": "The name of the icon attached to the board",
+              "example": "icon-project-5"
+            },
+            "backgroundUrl": {
+              "type": "string",
+              "description": "Board's Background",
+              "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
+            },
+            "owner": {
+              "type": "string",
+              "description": "User's id attached to the board",
+              "example": "666360f436afcfb89fea6e15"
+            },
+            "createdAt": {
+              "type": "string",
+              "description": "Crated at time",
+              "format": "date-time",
+              "example": "2024-06-08T11:34:34.329Z"
+            },
+            "updatedAt": {
+              "type": "string",
+              "description": "Updated at time",
+              "format": "date-time",
+              "example": "2024-06-08T11:34:34.329Z"
+            }
+          }
+        }
+      },
+      "GetBoardsResponse": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "_id": {
+              "type": "string",
+              "description": "Board's id",
+              "example": "666441ca47f3118ab3b584c9"
+            },
+            "name": {
+              "type": "string",
+              "description": "Board's name",
+              "example": "My board"
+            },
+            "iconName": {
+              "type": "string",
+              "description": "The name of the icon attached to the board",
+              "example": "icon-project-5"
+            },
+            "backgroundUrl": {
+              "type": "string",
+              "description": "Board's Background",
+              "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
+            },
+            "owner": {
+              "type": "string",
+              "description": "User's id attached to the board",
+              "example": "666360f436afcfb89fea6e15"
+            },
+            "createdAt": {
+              "type": "string",
+              "description": "Crated at time",
+              "format": "date-time",
+              "example": "2024-06-08T11:34:34.329Z"
+            },
+            "updatedAt": {
+              "type": "string",
+              "description": "Updated at time",
+              "format": "date-time",
+              "example": "2024-06-08T11:34:34.329Z"
+            }
+          }
+        }
+      },
+      "GetBoardDetailsResponse": {
+        "type": "object",
+        "properties": {
+          "board": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "description": "Board's id",
+                "example": "666441ca47f3118ab3b584c9"
+              },
+              "name": {
+                "type": "string",
+                "description": "Board's name",
+                "example": "My board"
+              },
+              "iconName": {
+                "type": "string",
+                "enum": [
+                  "icon-project-1",
+                  "icon-project-2",
+                  "icon-project-3",
+                  "icon-project-4",
+                  "icon-project-5",
+                  "icon-project-6",
+                  "icon-project-7",
+                  "icon-project-8"
+                ],
+                "description": "The name of the icon attached to the board",
+                "example": "icon-project-5"
+              },
+              "backgroundUrl": {
+                "type": "string",
+                "description": "Board's Background",
+                "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
+              },
+              "owner": {
+                "type": "string",
+                "description": "User's id attached to the board",
+                "example": "666360f436afcfb89fea6e15"
+              },
+              "createdAt": {
+                "type": "string",
+                "description": "Crated at time",
+                "format": "date-time",
+                "example": "2024-06-08T11:34:34.329Z"
+              },
+              "updatedAt": {
+                "type": "string",
+                "description": "Updated at time",
+                "format": "date-time",
+                "example": "2024-06-08T11:34:34.329Z"
+              }
+            }
+          },
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "string",
+                  "description": "Column's id",
+                  "example": "666441ef47f3118ab3b584cf"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Column's name",
+                  "example": "In progress"
+                },
+                "boardId": {
+                  "type": "string",
+                  "description": "ID of the board attached to the column",
+                  "example": "666441ca47f3118ab3b584c9"
+                },
+                "owner": {
+                  "type": "string",
+                  "description": "User's id attached to the board",
+                  "example": "666360f436afcfb89fea6e15"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "description": "Crated at time",
+                  "format": "date-time",
+                  "example": "2024-06-08T11:35:11.014Z"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "description": "Updated at time",
+                  "format": "date-time",
+                  "example": "2024-06-08T11:35:11.014Z"
+                },
+                "cards": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "type": "string",
+                        "description": "Card's id",
+                        "example": "6664420947f3118ab3b584d3"
+                      },
+                      "title": {
+                        "type": "string",
+                        "description": "Card's title",
+                        "example": "Develo backend"
+                      },
+                      "description": {
+                        "type": "string",
+                        "description": "Card's description",
+                        "example": "description"
+                      },
+                      "priority": {
+                        "type": "string",
+                        "enum": ["without", "low", "medium", "high"],
+                        "description": "Task priority",
+                        "example": "low"
+                      },
+                      "isDone": {
+                        "type": "boolean",
+                        "description": "Task status",
+                        "example": false
+                      },
+                      "deadline": {
+                        "type": "string",
+                        "description": "Task deadline",
+                        "example": "123"
+                      },
+                      "columnId": {
+                        "type": "string",
+                        "description": "Column id attached to the card",
+                        "example": "666441ef47f3118ab3b584cf"
+                      },
+                      "owner": {
+                        "type": "string",
+                        "description": "User's id attached to the card",
+                        "example": "666360f436afcfb89fea6e15"
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "description": "Crated at time",
+                        "format": "date-time",
+                        "example": "2024-06-08T11:35:37.217Z"
+                      },
+                      "updatedAt": {
+                        "type": "string",
+                        "description": "Updated at time",
+                        "format": "date-time",
+                        "example": "2024-06-08T11:35:37.217Z"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "UpdateBoardRequest": {
+        "type": "object",
+        "oneOf": [
+          {
+            "required": ["name"]
+          },
+          {
+            "required": ["iconName"]
+          },
+          {
+            "required": ["backgroundUrl"]
+          }
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Board's name",
+            "example": "My board"
+          },
+          "iconName": {
+            "type": "string",
+            "enum": [
+              "icon-project-1",
+              "icon-project-2",
+              "icon-project-3",
+              "icon-project-4",
+              "icon-project-5",
+              "icon-project-6",
+              "icon-project-7",
+              "icon-project-8"
+            ],
+            "description": "The name of the icon attached to the board",
+            "format": "icon-project-1"
+          },
+          "backgroundUrl": {
+            "type": "string",
+            "description": "Board's Background",
+            "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
+          }
+        }
+      },
+      "UpdateBoardResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Board's id",
+            "example": "666441ca47f3118ab3b584c9"
+          },
+          "name": {
+            "type": "string",
+            "description": "Board's name",
+            "example": "My board"
+          },
+          "iconName": {
+            "type": "string",
+            "enum": [
+              "icon-project-1",
+              "icon-project-2",
+              "icon-project-3",
+              "icon-project-4",
+              "icon-project-5",
+              "icon-project-6",
+              "icon-project-7",
+              "icon-project-8"
+            ],
+            "description": "The name of the icon attached to the board",
+            "example": "icon-project-5"
+          },
+          "backgroundUrl": {
+            "type": "string",
+            "description": "Board's Background",
+            "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
+          },
+          "owner": {
+            "type": "string",
+            "description": "User's id attached to the board",
+            "example": "666360f436afcfb89fea6e15"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Crated at time",
+            "format": "date-time",
+            "example": "2024-06-08T11:34:34.329Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Updated at time",
+            "format": "date-time",
+            "example": "2024-06-08T11:34:34.329Z"
+          }
+        }
+      },
+      "DeleteBoardResponse": {
+        "type": "object",
+        "properties": {
           "message": {
             "type": "string",
-            "description": "Successful operation",
-            "example": "User's theme changed"
+            "description": "Response message",
+            "example": "Deleted successfully"
           }
         }
       }
