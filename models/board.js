@@ -1,6 +1,10 @@
 import { Schema, model } from "mongoose";
 import handleMongooseError from "../helpers/handleMongooseError.js";
 
+const icons = ["icon-project-1", "icon-project-2", "icon-project-3", "icon-project-4", "icon-project-5", "icon-project-6", "icon-project-7", "icon-project-8"];
+
+const backgroundUrlRegExp = /^(https?:\/\/)?([a-zA-Z0-9.-]+)(\.[a-zA-Z]{2,6})(:[0-9]{1,5})?(\/[^\s]*)?$/;
+  
 const boardSchema = new Schema(
   {
     name: {
@@ -9,11 +13,13 @@ const boardSchema = new Schema(
     },
     iconName: {
       type: String,
-      default: "icon-project-1",
+      enum: icons,
+      required: [true, "Icon name is required"],
     },
     backgroundUrl: {
       type: String,
-      default: null,
+      match: backgroundUrlRegExp,
+      required: [true, "backgroundUrl is required"]
     },
     owner: {
       type: Schema.Types.ObjectId,

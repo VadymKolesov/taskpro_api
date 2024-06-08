@@ -6,12 +6,8 @@ import controllerDecorator from "../helpers/controllerDecorator.js";
 
 const getAllBoards = controllerDecorator(async (req, res) => {
     const boards = await Board.find({ owner: req.user._id });
-
-    if (!boards || boards.length === 0) {
-        throw HttpError(404, "Not found");
-    }
-    res.status(200).send(boards);
-})
+    res.status(200).json(boards);
+});
 
 const createBoard = controllerDecorator(async (req, res) => {
     const { name, iconName, backgroundUrl } = req.body;
@@ -19,7 +15,7 @@ const createBoard = controllerDecorator(async (req, res) => {
 
     const newBoard = await Board.create({ name, iconName, backgroundUrl, owner: _id });
 
-    res.status(200).send(newBoard);
+    res.status(200).json(newBoard);
 });
 
 const getBoardDetails = controllerDecorator(async (req, res) => {
@@ -35,94 +31,89 @@ const getBoardDetails = controllerDecorator(async (req, res) => {
         const plainColumn = column.toObject();
         const cards = await Card.find({ columnId: column._id });
 
-        if (cards.length === 0) {
-            return plainColumn;
-        }
-
         plainColumn.cards = cards;
         return plainColumn;
     });
 
     const columns = await Promise.all(promises);
-    res.status(200).send({ board, columns });
+    res.status(200).json({ board, columns });
 })
 
 const deleteBoard = controllerDecorator(async (req, res) => {
     const { id } = req.params;
 
-    const columns = await Column.find({ boardId: id, owner: req.user._id });
-    if (!columns || columns.length === 0) {
-        throw HttpError(404, "No columns found for this board");
-    }
-
-    for (const column of columns) {
-        await Card.deleteMany({ columnId: column._id, owner: req.user._id });
-    }
-    await Column.deleteMany({ boardId: id, owner: req.user._id });
-
-    const board = await Board.findOneAndDelete({ owner: req.user._id, _id: id });
+    const board = await Board.findOne({ owner: req.user._id, _id: id });
     if (!board) {
         throw HttpError(404, "Board not found");
     }
 
-    res.status(200).send({ message: "Deleted successfully" });
+    const columns = await Column.find({ boardId: id, owner: req.user._id });
+
+    for (const column of columns) {
+        await Card.deleteMany({ columnId: column._id, owner: req.user._id });
+    }
+    
+    await Column.deleteMany({ boardId: id, owner: req.user._id });
+    await Board.findOneAndDelete({ owner: req.user._id, _id: id });
+
+    res.status(200).json({ message: "Deleted successfully" });
 })
 
-const updateBoardName = controllerDecorator(async (req, res) => {
-    const board = await Board.findOneAndUpdate({ owner: req.user._id, _id: req.params.id }, { name: req.body.name }, { new: true });
+const updateBoard = controllerDecorator(async (req, res) => {
+    const board = await Board.findOneAndUpdate({ owner: req.user._id, _id: req.params.id }, req.body, { new: true });
 
     if (!board) {
         throw HttpError(404, "Not found");
     }
 
-    res.status(200).send(board);
+    res.status(200).json(board);
 });
 
 const createColumn = controllerDecorator(async (req, res) => {
     const board = await Board.findOne({ owner: req.user._id, _id: req.params.id });
 
     if (!board) {
-        throw HttpError(404, "Board doesn't exist");
+        throw HttpError(404, "Board not found");
     }
 
     const column = await Column.create({ name: req.body.name, owner: req.user._id, boardId: req.params.id });
 
-    res.status(200).send(column);
+    res.status(200).json(column);
 })
 
 const updateColumn = controllerDecorator(async (req, res) => {
-    const column = await Column.findOneAndUpdate({ _id: req.params.id, owner: req.user._id }, { name: req.body.name }, { new: true });
+    const column = await Column.findOneAndUpdate({ _id: req.params.id, owner: req.user._id }, req.body, { new: true });
 
     if (!column) {
-        throw HttpError(404, "Not found");
+        throw HttpError(404, "Column not found");
     }
 
-    res.status(200).send(column);
+    res.status(200).json(column);
 })
 
 const deleteColumn = controllerDecorator(async (req, res) => {
-    await Card.deleteMany({ columnId: req.params.id, owner: req.user._id });
-
-    const column = await Column.findOneAndDelete({ _id: req.params.id, owner: req.user._id });
+    const column = await Column.findOne({ _id: req.params.id, owner: req.user._id });
 
     if (!column) {
-        throw HttpError(404, "Not found");
+        throw HttpError(404, "Column not found");
     }
 
-    res.status(200).send({ message: "Deleted successfully" });
+    await Card.deleteMany({ columnId: req.params.id, owner: req.user._id });
+    await Column.findOneAndDelete({ _id: req.params.id, owner: req.user._id });
+
+    res.status(200).json({ message: "Deleted successfully" });
 })
 
 const createCard = controllerDecorator(async (req, res) => {
-    const { title, description, priority, isDone, deadline } = req.body;
     const column = await Column.findOne({ owner: req.user._id, _id: req.params.id });
 
     if (!column) {
-        throw HttpError(404, "Column doesn't exist");
+        throw HttpError(404, "Column not found");
     }
 
-    const card = await Card.create({ title, description, priority, isDone, deadline, owner: req.user._id, columnId: req.params.id });
+    const card = await Card.create({ ...req.body, owner: req.user._id, columnId: req.params.id });
 
-    res.status(200).send(card);
+    res.status(200).json(card);
 })
 
 const deleteCard = controllerDecorator(async (req, res) => {
@@ -132,30 +123,47 @@ const deleteCard = controllerDecorator(async (req, res) => {
         throw HttpError(404, "Not found");
     }
 
-    res.status(200).send({ message: "Deleted successfully" });
+    res.status(200).json({ message: "Deleted successfully" });
 })
 
 const updateCard = controllerDecorator(async (req, res) => {
-    const { title, description, priority, isDone, deadline } = req.body;
     const card = await Card.findOne({ _id: req.params.id, owner: req.user._id });
 
     if (!card) {
         throw HttpError(404, "Not found");
     }
 
-    const updatedCard = await Card.findOneAndUpdate({ columnId: req.params.id, _id: req.params.id, owner: req.user._id }, { title, description, priority, isDone, deadline }, { new: true });
+    const updatedCard = await Card.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true });
 
-    res.status(200).send(updatedCard);
+    res.status(200).json(updatedCard);
 })
 
 const updateCardStatus = controllerDecorator(async (req, res) => {
-    const card = await Card.findOneAndUpdate({ _id: req.params.id, owner: req.user._id }, { isDone: req.body.isDone }, { new: true });
+    const card = await Card.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true });
 
     if (!card) {
         throw HttpError(404, "Not found");
     }
 
-    res.status(200).send(card);
+    res.status(200).json(card);
+})
+
+const updateCardColumn = controllerDecorator(async (req, res, next) => {
+    const { id } = req.params;
+    const { columnId } = req.body;
+    const { _id } = req.user;
+    
+    const column = await Column.findOne({ _id: columnId, owner: _id });
+    if (!column) {
+        throw HttpError(404, "Column not found");
+    }
+
+    const card = await Card.findOneAndUpdate({ _id: id, owner: _id }, {columnId}, { new: true });
+    if (!card) {
+       throw HttpError(404, "Card not found");
+    }
+
+    res.status(200).json(card);
 })
 
 export {
@@ -167,8 +175,9 @@ export {
     deleteBoard,
     deleteColumn,
     deleteCard,
-    updateBoardName,
+    updateBoard,
     updateColumn,
     updateCard,
-    updateCardStatus
+    updateCardStatus,
+    updateCardColumn
 }
