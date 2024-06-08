@@ -1,5 +1,4 @@
 import controllerDecorator from "../helpers/controllerDecorator.js";
-import User from "../models/user.js"; 
 import User from "../models/user.js";
 import HttpError from "../helpers/HttpError.js";
 import { v2 as cloudinary } from 'cloudinary';
