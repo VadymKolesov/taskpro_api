@@ -2,7 +2,7 @@ import Joi from "joi";
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-const needHelp = Joi.object({
+export const needHelp = Joi.object({
   email: Joi.string().pattern(emailRegex).required().messages({
     "string.pattern.base": "Invalid email format",
     "any.required": "Email is required",
@@ -12,5 +12,3 @@ const needHelp = Joi.object({
     "any.required": "Comment is required",
   }),
 });
-
-export default { needHelp };
