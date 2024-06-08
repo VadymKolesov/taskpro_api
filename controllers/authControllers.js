@@ -3,10 +3,7 @@ import User from "../models/user.js";
 import HttpError from "../helpers/HttpError.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import cloudinary from 'cloudinary';
-import multer from "multer";
-
-
+import { v2 as cloudinary } from 'cloudinary';
 
 export const registerUser = controllerDecorator(async (req, res, next) => {
     const { email, password, name, avatarUrl } = req.body;
@@ -62,7 +59,7 @@ export const loginUser = controllerDecorator(async (req, res, next) => {
 });
 
 export const logoutUser = controllerDecorator(async (req, res) => {
-    const { _id: id } = req.user;
+    const { id: _id } = req.user;
     const user = await User.findById(id);
     if (!user) {
         throw HttpError(404, "User not found");
@@ -79,7 +76,7 @@ export const getCurrentUser = controllerDecorator(async (req, res, next) => {
 });
 
 export const updateUserTheme = controllerDecorator(async (req, res, next) => {
-    const { id } = req.user;
+    const { id: _id } = req.user;
     const { theme } = req.body;
 
     const user = await User.findByIdAndUpdate(id , {theme});
@@ -88,34 +85,27 @@ export const updateUserTheme = controllerDecorator(async (req, res, next) => {
     } else if( theme === user.theme){
         throw HttpError(409, "User alredy use this theme")
     }
-    res.status(200).json("User theme changed");
+    res.status(200).json("User's theme changed");
     }
   );
 
   export const updateUser = controllerDecorator(async ( req, res, next) =>{
-    const { id } = req.params;
-    const { _id: owner } = req.user;
+    const { id } = req.user;
+    const { password } = req.body;
    
-    const { name, email, password } = req.body;
-    const updateData = {};
-    if (name) updateData.name = name;
-    if (email) updateData.email = email;
-    if (password) {
-        const passwordSalt = await bcrypt.genSalt(10);
-        updateData.password = await bcrypt.hash(password, passwordSalt);
-      }
-
-      const user = await User.findOneAndUpdate(
-        { _id: id, _id: owner },
-        updateData,
-        { new: true }
-      );
+    const hashPassword = await bcrypt.hash(password, 10);
+      
+    const user = await User.findByIdAndUpdate(
+        id,
+        {...req.body, 
+        password: hashPassword},
+        { new: true});  
 
     if (!user) {
     throw HttpError(404, "Not found");
     }
   
-    res.status(200).json("User data changed");
+    res.status(200).json({name: user.name, email: user.email});
 });
 
 cloudinary.v2.config({
@@ -132,36 +122,39 @@ const storage = new CloudinaryStorage({
     },
   });  
 
-const upload = multer({ storage });
-
-export const updateAvatar = controllerDecorator(async(req, res, next) =>{
+export const updateAvatar = controllerDecorator(async (req, res, next) => {
    
-    
-    if (!req.user) throw HttpError(401, "Not authorized");
-    if (!req.file) throw HttpError(400, "File not provided");
-
-    const { _id } = req.user;
-    const { path: tmpUpload, originalname } = req.file;
-
-    const result = await cloudinary.v2.uploader.upload(tmpUpload, {
-        folder: "avatars",
-        public_id: `${_id}_${originalname}`,
-        transformation: { width: 250, height: 250, crop: "fill" },
-    });
-
-    const avatarURL = result.secure_url;
-
-    const user = await User.findByIdAndUpdate(_id, { avatarUrl: avatarURL }, { new: true });
-
-    if (!user) {
+      const { _id } = req.user;
+  
+      const user = await User.findById(_id);
+      if (!user) {
         throw HttpError(404, "User not found");
-    }
+      }
+  
+      let avatarURL = user.avatarURL;
+  
+      if (req.file) {
+        if (avatarURL !== "") {
+          const urlSliced = avatarURL.slice(62, avatarURL.length - 4);
+          await cloudinary.uploader.destroy(urlSliced, {
+            invalidate: true,
+            resource_type: "image",
+          });
+        }
+        const result = await cloudinary.uploader.upload(req.file.path, {
+          folder: "avatars",
+          public_id: `${_id}_${req.file.originalname}`,
+        });
+  
+        avatarURL = result.secure_url;
+      }
 
-    res.status(200).json({ avatarURL });
+      user.avatarURL = avatarURL;
+      await user.save();
 
-        
-
-})
+      res.status(200).json({ avatarURL });
+   
+  });
 
 
 
