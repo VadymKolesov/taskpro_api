@@ -7,7 +7,7 @@
   },
   "consumes": ["application/json", "multipart/form-data"],
   "produces": ["application/json"],
-  "servers": [{ "url": "" }],
+  "servers": [{ "url": "https://taskpro-api-laom.onrender.com" }],
   "tags": [
     {
       "name": "Auth",
@@ -20,6 +20,14 @@
     {
       "name": "Boards",
       "description": "Boards endpoints"
+    },
+    {
+      "name": "Columns",
+      "description": "Columns endpoints"
+    },
+    {
+      "name": "Cards",
+      "description": "Cards endpoints"
     }
   ],
   "paths": {
@@ -423,6 +431,374 @@
           },
           "404": {
             "description": "Board not found"
+          }
+        }
+      }
+    },
+    "api/columns/:id": {
+      "post": {
+        "tags": ["Columns"],
+        "summary": "Create new column",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the board to which the column is bound"
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Create column schema",
+          "required": "true",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ColumnRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ColumnResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Board not found"
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Columns"],
+        "summary": "Update column",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Column's id"
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Update column schema",
+          "required": "true",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ColumnRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ColumnResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Column not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Columns"],
+        "summary": "Delete column",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Column's id"
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteBoardResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid id"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Column not found"
+          }
+        }
+      }
+    },
+    "api/cards/:id": {
+      "post": {
+        "tags": ["Cards"],
+        "summary": "Create new card",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the column to which the card is bound"
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Create card schema",
+          "required": "true",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CardRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Column not found"
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Cards"],
+        "summary": "Update card",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Card's id"
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Update card schema",
+          "required": "true",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CardRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Card not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Cards"],
+        "summary": "Delete card",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Card's id"
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteBoardResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid id"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Card not found"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Cards"],
+        "summary": "Update status for card",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Card's id"
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Update status for card schema",
+          "required": "true",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateStatusCardRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Card not found"
+          }
+        }
+      }
+    },
+    "api/cards/:id/column": {
+      "put": {
+        "tags": ["Cards"],
+        "summary": "Update Column id attached to the card",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Card's id"
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Update Column id attached to the card schema",
+          "required": "true",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCardColumnRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Card not found"
           }
         }
       }
@@ -1060,6 +1436,161 @@
             "type": "string",
             "description": "Response message",
             "example": "Deleted successfully"
+          }
+        }
+      },
+      "ColumnRequest": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Column's name",
+            "example": "To do"
+          }
+        }
+      },
+      "ColumnResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Column's id",
+            "example": "666441ef47f3118ab3b584cf"
+          },
+          "name": {
+            "type": "string",
+            "description": "Column's name",
+            "example": "To do"
+          },
+          "boardId": {
+            "type": "string",
+            "description": "ID of the board attached to the column",
+            "example": "666441ca47f3118ab3b584c9"
+          },
+          "owner": {
+            "type": "string",
+            "description": "User's id attached to the column",
+            "example": "666360f436afcfb89fea6e15"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Crated at time",
+            "format": "date-time",
+            "example": "2024-06-08T11:35:11.014Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Updated at time",
+            "format": "date-time",
+            "example": "2024-06-08T11:35:11.014Z"
+          }
+        }
+      },
+      "CardRequest": {
+        "type": "object",
+        "required": ["title", "description", "deadline", "priority"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Card's title",
+            "example": "Create api"
+          },
+          "description": {
+            "type": "string",
+            "description": "Card's description",
+            "example": "Create api in accordance with the terms of reference"
+          },
+          "deadline": {
+            "type": "string",
+            "description": "Task deadline in Unix Timestamp format",
+            "example": "1717932866896"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["without", "low", "medium", "high"],
+            "description": "Task priority",
+            "example": "medium"
+          }
+        }
+      },
+      "CardResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Card's id",
+            "example": "6664420947f3118ab3b584d3"
+          },
+          "title": {
+            "type": "string",
+            "description": "Card's title",
+            "example": "Create api"
+          },
+          "description": {
+            "type": "string",
+            "description": "Card's description",
+            "example": "Create api in accordance with the terms of reference"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["without", "low", "medium", "high"],
+            "description": "Task priority",
+            "example": "medium"
+          },
+          "isDone": {
+            "type": "boolean",
+            "description": "Task status",
+            "example": false
+          },
+          "deadline": {
+            "type": "string",
+            "description": "Task deadline",
+            "example": "1717932866896"
+          },
+          "columnId": {
+            "type": "string",
+            "description": "Column id attached to the card",
+            "example": "666441ef47f3118ab3b584cf"
+          },
+          "owner": {
+            "type": "string",
+            "description": "User's id attached to the card",
+            "example": "666360f436afcfb89fea6e15"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Crated at time",
+            "format": "date-time",
+            "example": "2024-06-08T11:35:37.217Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Updated at time",
+            "format": "date-time",
+            "example": "2024-06-08T11:35:37.217Z"
+          }
+        }
+      },
+      "UpdateStatusCardRequest": {
+        "type": "object",
+        "required": ["isDone"],
+        "properties": {
+          "isDone": {
+            "type": "boolean",
+            "description": "Card's status is done",
+            "example": false
+          }
+        }
+      },
+      "UpdateCardColumnRequest": {
+        "type": "object",
+        "required": ["columnId"],
+        "properties": {
+          "columnId": {
+            "type": "string",
+            "description": "Column id attached to the card",
+            "example": "666441ef47f3118ab3b584cf"
           }
         }
       }

@@ -9,6 +9,9 @@ import "dotenv/config";
 import authRouter from "./routes/authRouter.js";
 import usersRouter from "./routes/usersRouter.js";
 import boardsRouter from "./routes/boardsRouter.js";
+import columnsRouter from "./routes/columnsRouter.js";
+import cardsRouter from "./routes/cardsRouter.js";
+
 import helpRouter from "./routes/helpRouter.js";
 
 const { CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET } =
@@ -30,6 +33,8 @@ app.use(express.json());
 app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/boards", boardsRouter);
+app.use("/api/columns", columnsRouter);
+app.use("/api/cards", cardsRouter);
 app.use("/api/help", helpRouter);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));

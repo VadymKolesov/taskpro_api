@@ -18,7 +18,7 @@ export const boardSchema = Joi.object({
     .valid(...icons)
     .required()
     .messages({
-      "string.min": "Name must contain less than 18 characters",
+      "string.max": "Name must contain less than 18 characters",
       "any.required": "Name is required",
     }),
   iconName: Joi.string().required().messages({
@@ -31,18 +31,18 @@ export const boardSchema = Joi.object({
 
 export const columnSchema = Joi.object({
   name: Joi.string().max(30).required().messages({
-    "string.min": "Name must contain less than 30 characters",
+    "string.max": "Name must contain less than 30 characters",
     "any.required": "Name is required",
   }),
 });
 
 export const cardSchema = Joi.object({
   title: Joi.string().max(50).required().messages({
-    "string.min": "Title must contain less than 50 characters",
+    "string.max": "Title must contain less than 50 characters",
     "any.required": "Title is required",
   }),
   description: Joi.string().max(300).required().messages({
-    "string.min": "Description must contain less than 300 characters",
+    "string.max": "Description must contain less than 300 characters",
     "any.required": "Description is required",
   }),
   deadline: Joi.string().required().messages({
