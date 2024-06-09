@@ -1,0 +1,1606 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "version": "0.0.1",
+    "title": "TaskPro API",
+    "description": "Tasks manage app"
+  },
+  "consumes": ["application/json", "multipart/form-data"],
+  "produces": ["application/json"],
+  "servers": [{ "url": "https://taskpro-api-laom.onrender.com" }],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Authorization endpoints"
+    },
+    {
+      "name": "Users",
+      "description": "Users endpoints"
+    },
+    {
+      "name": "Boards",
+      "description": "Boards endpoints"
+    },
+    {
+      "name": "Columns",
+      "description": "Columns endpoints"
+    },
+    {
+      "name": "Cards",
+      "description": "Cards endpoints"
+    }
+  ],
+  "paths": {
+    "api/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "User login",
+        "requestBody": {
+          "description": "Login request body",
+          "required": "true",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Email or password is wrong"
+          }
+        }
+      }
+    },
+    "api/auth/register": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "User register",
+        "requestBody": {
+          "description": "Register request body",
+          "required": "true",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "409": {
+            "description": "Email already in use"
+          }
+        }
+      }
+    },
+    "api/auth/logout": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "User logout",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "204": {
+            "description": "Successful operation"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "api/auth/current": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Get current user",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CurrentResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "api/users": {
+      "patch": {
+        "tags": ["Users"],
+        "summary": "Update user",
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Update user request body",
+          "required": "true",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateUserResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "api/users/theme": {
+      "put": {
+        "tags": ["Users"],
+        "summary": "Update user's theme",
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Update user's theme request body",
+          "required": "true",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateThemeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateThemeResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "409": {
+            "description": "User alredy use this theme"
+          }
+        }
+      }
+    },
+    "api/users/avatar": {
+      "put": {
+        "tags": ["Users"],
+        "summary": "Update user's avatar",
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Update user's avatar request body",
+          "required": "true",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAvatarRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateAvatarResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Image is required"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "api/boards": {
+      "post": {
+        "tags": ["Boards"],
+        "summary": "Create new board",
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Create new board request body",
+          "required": "true",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBoardRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateBoardResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "get": {
+        "tags": ["Boards"],
+        "summary": "Get boards",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBoardsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "api/boards/:id": {
+      "get": {
+        "tags": ["Boards"],
+        "summary": "Get board details",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Board's id"
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBoardDetailsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Board not found"
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Boards"],
+        "summary": "Update board",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Board's id"
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Update board request body",
+          "required": "true",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBoardRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateBoardResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Board not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Boards"],
+        "summary": "Delete board",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Board's id"
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteBoardResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Board not found"
+          }
+        }
+      }
+    },
+    "api/columns/:id": {
+      "post": {
+        "tags": ["Columns"],
+        "summary": "Create new column",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the board to which the column is bound"
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Create column schema",
+          "required": "true",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ColumnRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ColumnResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Board not found"
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Columns"],
+        "summary": "Update column",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Column's id"
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Update column schema",
+          "required": "true",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ColumnRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ColumnResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Column not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Columns"],
+        "summary": "Delete column",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Column's id"
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteBoardResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid id"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Column not found"
+          }
+        }
+      }
+    },
+    "api/cards/:id": {
+      "post": {
+        "tags": ["Cards"],
+        "summary": "Create new card",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the column to which the card is bound"
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Create card schema",
+          "required": "true",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CardRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Column not found"
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Cards"],
+        "summary": "Update card",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Card's id"
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Update card schema",
+          "required": "true",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CardRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Card not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Cards"],
+        "summary": "Delete card",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Card's id"
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteBoardResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid id"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Card not found"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Cards"],
+        "summary": "Update status for card",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Card's id"
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Update status for card schema",
+          "required": "true",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateStatusCardRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Card not found"
+          }
+        }
+      }
+    },
+    "api/cards/:id/column": {
+      "put": {
+        "tags": ["Cards"],
+        "summary": "Update Column id attached to the card",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Card's id"
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Update Column id attached to the card schema",
+          "required": "true",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCardColumnRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Card not found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LoginRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password",
+            "example": "qwerty123"
+          }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "User's name",
+                "example": "User"
+              },
+              "email": {
+                "type": "string",
+                "description": "User's email",
+                "format": "email"
+              },
+              "avatarUrl": {
+                "type": "string",
+                "description": "User's avatar url",
+                "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
+              },
+              "theme": {
+                "type": "string",
+                "description": "User's theme",
+                "example": "dark"
+              }
+            }
+          },
+          "token": {
+            "type": "string",
+            "description": "User's jwt token",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+          }
+        }
+      },
+      "RegisterRequest": {
+        "type": "object",
+        "required": ["name", "email", "password"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "User's name",
+            "example": "User"
+          },
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password",
+            "example": "qwerty123"
+          }
+        }
+      },
+      "RegisterResponse": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "User's name",
+                "example": "User"
+              },
+              "email": {
+                "type": "string",
+                "description": "User's email",
+                "format": "email"
+              },
+              "avatarUrl": {
+                "type": "string",
+                "description": "User's avatar url",
+                "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
+              },
+              "theme": {
+                "type": "string",
+                "description": "User's theme",
+                "example": "dark"
+              }
+            }
+          }
+        }
+      },
+      "CurrentResponse": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "User's name",
+                "example": "User"
+              },
+              "email": {
+                "type": "string",
+                "description": "User's email",
+                "format": "email"
+              },
+              "avatarUrl": {
+                "type": "string",
+                "description": "User's avatar url",
+                "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
+              },
+              "theme": {
+                "type": "string",
+                "description": "User's theme",
+                "example": "dark"
+              }
+            }
+          }
+        }
+      },
+      "UpdateUserRequest": {
+        "type": "object",
+        "oneOf": [
+          {
+            "required": ["name"]
+          },
+          {
+            "required": ["email"]
+          },
+          {
+            "required": ["password"]
+          }
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "User's name",
+            "example": "User"
+          },
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password",
+            "example": "qwerty123"
+          }
+        }
+      },
+      "UpdateUserResponse": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "User's name",
+                "example": "User"
+              },
+              "email": {
+                "type": "string",
+                "description": "User's email",
+                "format": "email"
+              },
+              "avatarUrl": {
+                "type": "string",
+                "description": "User's avatar url",
+                "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
+              },
+              "theme": {
+                "type": "string",
+                "description": "User's theme",
+                "example": "dark"
+              }
+            }
+          }
+        }
+      },
+      "UpdateThemeRequest": {
+        "type": "object",
+        "required": ["theme"],
+        "enum": ["dark", "light", "violet"],
+        "properties": {
+          "theme": {
+            "type": "string",
+            "description": "User's new theme",
+            "example": "dark"
+          }
+        }
+      },
+      "UpdateThemeResponse": {
+        "type": "object",
+        "properties": {
+          "theme": {
+            "type": "string",
+            "description": "User's new theme",
+            "example": "dark"
+          },
+          "avatarUrl": {
+            "type": "string",
+            "description": "User's avatar",
+            "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
+          }
+        }
+      },
+      "UpdateAvatarRequest": {
+        "type": "object",
+        "required": ["avatar"],
+        "properties": {
+          "avatar": {
+            "type": "string",
+            "description": "User's new avatar",
+            "format": "binary"
+          }
+        }
+      },
+      "UpdateAvatarResponse": {
+        "type": "object",
+        "properties": {
+          "avatarUrl": {
+            "type": "string",
+            "description": "User's avatar",
+            "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
+          }
+        }
+      },
+      "CreateBoardRequest": {
+        "type": "object",
+        "required": ["name", "iconName", "backgroundUrl"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Board's name",
+            "example": "My board"
+          },
+          "iconName": {
+            "type": "string",
+            "enum": [
+              "icon-project-1",
+              "icon-project-2",
+              "icon-project-3",
+              "icon-project-4",
+              "icon-project-5",
+              "icon-project-6",
+              "icon-project-7",
+              "icon-project-8"
+            ],
+            "description": "The name of the icon attached to the board",
+            "format": "icon-project-1"
+          },
+          "backgroundUrl": {
+            "type": "string",
+            "description": "Board's Background",
+            "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
+          }
+        }
+      },
+      "CreateBoardResponse": {
+        "type": "object",
+        "properties": {
+          "type": "object",
+          "properties": {
+            "_id": {
+              "type": "string",
+              "description": "Board's id",
+              "example": "666441ca47f3118ab3b584c9"
+            },
+            "name": {
+              "type": "string",
+              "description": "Board's name",
+              "example": "My board"
+            },
+            "iconName": {
+              "type": "string",
+              "enum": [
+                "icon-project-1",
+                "icon-project-2",
+                "icon-project-3",
+                "icon-project-4",
+                "icon-project-5",
+                "icon-project-6",
+                "icon-project-7",
+                "icon-project-8"
+              ],
+              "description": "The name of the icon attached to the board",
+              "example": "icon-project-5"
+            },
+            "backgroundUrl": {
+              "type": "string",
+              "description": "Board's Background",
+              "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
+            },
+            "owner": {
+              "type": "string",
+              "description": "User's id attached to the board",
+              "example": "666360f436afcfb89fea6e15"
+            },
+            "createdAt": {
+              "type": "string",
+              "description": "Crated at time",
+              "format": "date-time",
+              "example": "2024-06-08T11:34:34.329Z"
+            },
+            "updatedAt": {
+              "type": "string",
+              "description": "Updated at time",
+              "format": "date-time",
+              "example": "2024-06-08T11:34:34.329Z"
+            }
+          }
+        }
+      },
+      "GetBoardsResponse": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "_id": {
+              "type": "string",
+              "description": "Board's id",
+              "example": "666441ca47f3118ab3b584c9"
+            },
+            "name": {
+              "type": "string",
+              "description": "Board's name",
+              "example": "My board"
+            },
+            "iconName": {
+              "type": "string",
+              "description": "The name of the icon attached to the board",
+              "example": "icon-project-5"
+            },
+            "backgroundUrl": {
+              "type": "string",
+              "description": "Board's Background",
+              "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
+            },
+            "owner": {
+              "type": "string",
+              "description": "User's id attached to the board",
+              "example": "666360f436afcfb89fea6e15"
+            },
+            "createdAt": {
+              "type": "string",
+              "description": "Crated at time",
+              "format": "date-time",
+              "example": "2024-06-08T11:34:34.329Z"
+            },
+            "updatedAt": {
+              "type": "string",
+              "description": "Updated at time",
+              "format": "date-time",
+              "example": "2024-06-08T11:34:34.329Z"
+            }
+          }
+        }
+      },
+      "GetBoardDetailsResponse": {
+        "type": "object",
+        "properties": {
+          "board": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "description": "Board's id",
+                "example": "666441ca47f3118ab3b584c9"
+              },
+              "name": {
+                "type": "string",
+                "description": "Board's name",
+                "example": "My board"
+              },
+              "iconName": {
+                "type": "string",
+                "enum": [
+                  "icon-project-1",
+                  "icon-project-2",
+                  "icon-project-3",
+                  "icon-project-4",
+                  "icon-project-5",
+                  "icon-project-6",
+                  "icon-project-7",
+                  "icon-project-8"
+                ],
+                "description": "The name of the icon attached to the board",
+                "example": "icon-project-5"
+              },
+              "backgroundUrl": {
+                "type": "string",
+                "description": "Board's Background",
+                "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
+              },
+              "owner": {
+                "type": "string",
+                "description": "User's id attached to the board",
+                "example": "666360f436afcfb89fea6e15"
+              },
+              "createdAt": {
+                "type": "string",
+                "description": "Crated at time",
+                "format": "date-time",
+                "example": "2024-06-08T11:34:34.329Z"
+              },
+              "updatedAt": {
+                "type": "string",
+                "description": "Updated at time",
+                "format": "date-time",
+                "example": "2024-06-08T11:34:34.329Z"
+              }
+            }
+          },
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "string",
+                  "description": "Column's id",
+                  "example": "666441ef47f3118ab3b584cf"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Column's name",
+                  "example": "In progress"
+                },
+                "boardId": {
+                  "type": "string",
+                  "description": "ID of the board attached to the column",
+                  "example": "666441ca47f3118ab3b584c9"
+                },
+                "owner": {
+                  "type": "string",
+                  "description": "User's id attached to the board",
+                  "example": "666360f436afcfb89fea6e15"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "description": "Crated at time",
+                  "format": "date-time",
+                  "example": "2024-06-08T11:35:11.014Z"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "description": "Updated at time",
+                  "format": "date-time",
+                  "example": "2024-06-08T11:35:11.014Z"
+                },
+                "cards": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "type": "string",
+                        "description": "Card's id",
+                        "example": "6664420947f3118ab3b584d3"
+                      },
+                      "title": {
+                        "type": "string",
+                        "description": "Card's title",
+                        "example": "Develo backend"
+                      },
+                      "description": {
+                        "type": "string",
+                        "description": "Card's description",
+                        "example": "description"
+                      },
+                      "priority": {
+                        "type": "string",
+                        "enum": ["without", "low", "medium", "high"],
+                        "description": "Task priority",
+                        "example": "low"
+                      },
+                      "isDone": {
+                        "type": "boolean",
+                        "description": "Task status",
+                        "example": false
+                      },
+                      "deadline": {
+                        "type": "string",
+                        "description": "Task deadline",
+                        "example": "123"
+                      },
+                      "columnId": {
+                        "type": "string",
+                        "description": "Column id attached to the card",
+                        "example": "666441ef47f3118ab3b584cf"
+                      },
+                      "owner": {
+                        "type": "string",
+                        "description": "User's id attached to the card",
+                        "example": "666360f436afcfb89fea6e15"
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "description": "Crated at time",
+                        "format": "date-time",
+                        "example": "2024-06-08T11:35:37.217Z"
+                      },
+                      "updatedAt": {
+                        "type": "string",
+                        "description": "Updated at time",
+                        "format": "date-time",
+                        "example": "2024-06-08T11:35:37.217Z"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "UpdateBoardRequest": {
+        "type": "object",
+        "oneOf": [
+          {
+            "required": ["name"]
+          },
+          {
+            "required": ["iconName"]
+          },
+          {
+            "required": ["backgroundUrl"]
+          }
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Board's name",
+            "example": "My board"
+          },
+          "iconName": {
+            "type": "string",
+            "enum": [
+              "icon-project-1",
+              "icon-project-2",
+              "icon-project-3",
+              "icon-project-4",
+              "icon-project-5",
+              "icon-project-6",
+              "icon-project-7",
+              "icon-project-8"
+            ],
+            "description": "The name of the icon attached to the board",
+            "format": "icon-project-1"
+          },
+          "backgroundUrl": {
+            "type": "string",
+            "description": "Board's Background",
+            "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
+          }
+        }
+      },
+      "UpdateBoardResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Board's id",
+            "example": "666441ca47f3118ab3b584c9"
+          },
+          "name": {
+            "type": "string",
+            "description": "Board's name",
+            "example": "My board"
+          },
+          "iconName": {
+            "type": "string",
+            "enum": [
+              "icon-project-1",
+              "icon-project-2",
+              "icon-project-3",
+              "icon-project-4",
+              "icon-project-5",
+              "icon-project-6",
+              "icon-project-7",
+              "icon-project-8"
+            ],
+            "description": "The name of the icon attached to the board",
+            "example": "icon-project-5"
+          },
+          "backgroundUrl": {
+            "type": "string",
+            "description": "Board's Background",
+            "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
+          },
+          "owner": {
+            "type": "string",
+            "description": "User's id attached to the board",
+            "example": "666360f436afcfb89fea6e15"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Crated at time",
+            "format": "date-time",
+            "example": "2024-06-08T11:34:34.329Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Updated at time",
+            "format": "date-time",
+            "example": "2024-06-08T11:34:34.329Z"
+          }
+        }
+      },
+      "DeleteBoardResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Deleted successfully"
+          }
+        }
+      },
+      "ColumnRequest": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Column's name",
+            "example": "To do"
+          }
+        }
+      },
+      "ColumnResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Column's id",
+            "example": "666441ef47f3118ab3b584cf"
+          },
+          "name": {
+            "type": "string",
+            "description": "Column's name",
+            "example": "To do"
+          },
+          "boardId": {
+            "type": "string",
+            "description": "ID of the board attached to the column",
+            "example": "666441ca47f3118ab3b584c9"
+          },
+          "owner": {
+            "type": "string",
+            "description": "User's id attached to the column",
+            "example": "666360f436afcfb89fea6e15"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Crated at time",
+            "format": "date-time",
+            "example": "2024-06-08T11:35:11.014Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Updated at time",
+            "format": "date-time",
+            "example": "2024-06-08T11:35:11.014Z"
+          }
+        }
+      },
+      "CardRequest": {
+        "type": "object",
+        "required": ["title", "description", "deadline", "priority"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Card's title",
+            "example": "Create api"
+          },
+          "description": {
+            "type": "string",
+            "description": "Card's description",
+            "example": "Create api in accordance with the terms of reference"
+          },
+          "deadline": {
+            "type": "string",
+            "description": "Task deadline in Unix Timestamp format",
+            "example": "1717932866896"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["without", "low", "medium", "high"],
+            "description": "Task priority",
+            "example": "medium"
+          }
+        }
+      },
+      "CardResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Card's id",
+            "example": "6664420947f3118ab3b584d3"
+          },
+          "title": {
+            "type": "string",
+            "description": "Card's title",
+            "example": "Create api"
+          },
+          "description": {
+            "type": "string",
+            "description": "Card's description",
+            "example": "Create api in accordance with the terms of reference"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["without", "low", "medium", "high"],
+            "description": "Task priority",
+            "example": "medium"
+          },
+          "isDone": {
+            "type": "boolean",
+            "description": "Task status",
+            "example": false
+          },
+          "deadline": {
+            "type": "string",
+            "description": "Task deadline",
+            "example": "1717932866896"
+          },
+          "columnId": {
+            "type": "string",
+            "description": "Column id attached to the card",
+            "example": "666441ef47f3118ab3b584cf"
+          },
+          "owner": {
+            "type": "string",
+            "description": "User's id attached to the card",
+            "example": "666360f436afcfb89fea6e15"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Crated at time",
+            "format": "date-time",
+            "example": "2024-06-08T11:35:37.217Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Updated at time",
+            "format": "date-time",
+            "example": "2024-06-08T11:35:37.217Z"
+          }
+        }
+      },
+      "UpdateStatusCardRequest": {
+        "type": "object",
+        "required": ["isDone"],
+        "properties": {
+          "isDone": {
+            "type": "boolean",
+            "description": "Card's status is done",
+            "example": false
+          }
+        }
+      },
+      "UpdateCardColumnRequest": {
+        "type": "object",
+        "required": ["columnId"],
+        "properties": {
+          "columnId": {
+            "type": "string",
+            "description": "Column id attached to the card",
+            "example": "666441ef47f3118ab3b584cf"
+          }
+        }
+      }
+    },
+    "securitySchemas": {
+      "Bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

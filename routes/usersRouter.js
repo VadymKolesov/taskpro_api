@@ -21,12 +21,7 @@ usersRouter.patch(
   updateUser
 ); // Update user (name / email / password)
 
-usersRouter.patch(
-  "/avatar",
-  authenticate,
-  upload.single("avatar"),
-  updateAvatar
-); // Update user avatar
+usersRouter.put("/avatar", authenticate, upload.single("avatar"), updateAvatar); // Update user avatar
 
 usersRouter.put(
   "/theme",

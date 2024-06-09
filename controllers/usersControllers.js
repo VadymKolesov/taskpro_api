@@ -11,6 +11,10 @@ export const updateUserTheme = controllerDecorator(async (req, res) => {
 
   const user = await User.findById(_id);
 
+  if (!user) {
+    throw HttpError(404, "User not found");
+  }
+
   if (theme === user.theme) {
     throw HttpError(409, "User alredy use this theme");
   }
