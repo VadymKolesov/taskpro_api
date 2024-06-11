@@ -12,21 +12,43 @@ const icons = [
   "icon-project-8",
 ];
 
+const bgs = [
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8",
+  "9",
+  "10",
+  "11",
+  "12",
+  "13",
+  "14",
+  "15",
+];
+
 export const boardSchema = Joi.object({
-  name: Joi.string()
-    .max(18)
+  name: Joi.string().max(18).required().messages({
+    "string.max": "Name must contain less than 18 characters",
+    "any.required": "Name is required",
+  }),
+  iconName: Joi.string()
     .valid(...icons)
     .required()
     .messages({
-      "string.max": "Name must contain less than 18 characters",
-      "any.required": "Name is required",
+      "any.required": "Icon is required",
+      "any.only": "Invalid icon",
     }),
-  iconName: Joi.string().required().messages({
-    "any.required": "Icon name is required",
-  }),
-  backgroundUrl: Joi.string().required().messages({
-    "any.required": "Backgound url is required",
-  }),
+  backgroundName: Joi.string()
+    .valid(...bgs)
+    .required()
+    .messages({
+      "any.required": "Backgound is required",
+      "any.only": "Invalid background",
+    }),
 });
 
 export const columnSchema = Joi.object({

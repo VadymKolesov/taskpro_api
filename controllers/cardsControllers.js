@@ -18,7 +18,7 @@ export const createCard = controllerDecorator(async (req, res) => {
     ...req.body,
     owner: req.user._id,
     columnId: req.params.id,
-  });
+  }).select("_id title description priority isDone deadline columnId");
 
   res.status(200).json(card);
 });
@@ -47,7 +47,7 @@ export const updateCard = controllerDecorator(async (req, res) => {
     { _id: req.params.id },
     req.body,
     { new: true }
-  );
+  ).select("_id title description priority isDone deadline columnId");
 
   res.status(200).json(updatedCard);
 });
@@ -55,7 +55,7 @@ export const updateCard = controllerDecorator(async (req, res) => {
 export const updateCardStatus = controllerDecorator(async (req, res) => {
   const card = await Card.findByIdAndUpdate({ _id: req.params.id }, req.body, {
     new: true,
-  });
+  }).select("_id title description priority isDone deadline columnId");
 
   if (!card) {
     throw HttpError(404, "Card not found");
@@ -82,7 +82,8 @@ export const updateCardColumn = controllerDecorator(async (req, res, next) => {
     { _id: id, owner: _id },
     { columnId },
     { new: true }
-  );
+  ).select("_id title description priority isDone deadline columnId");
+
   if (!card) {
     throw HttpError(404, "Card not found");
   }

@@ -18,7 +18,7 @@ export const createColumn = controllerDecorator(async (req, res) => {
     name: req.body.name,
     owner: req.user._id,
     boardId: req.params.id,
-  });
+  }).select("_id name boardId");
 
   res.status(201).json(column);
 });
@@ -28,7 +28,7 @@ export const updateColumn = controllerDecorator(async (req, res) => {
     { _id: req.params.id, owner: req.user._id },
     req.body,
     { new: true }
-  );
+  ).select("_id name boardId");
 
   if (!column) {
     throw HttpError(404, "Column not found");
