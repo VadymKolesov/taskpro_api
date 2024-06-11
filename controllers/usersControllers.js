@@ -4,6 +4,7 @@ import HttpError from "../helpers/HttpError.js";
 import { getAvatar } from "../helpers/getAvatar.js";
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs/promises";
+import bcrypt from "bcrypt";
 
 export const updateUserTheme = controllerDecorator(async (req, res) => {
   const { _id } = req.user;
@@ -39,6 +40,12 @@ export const updateUser = controllerDecorator(async (req, res) => {
   if (req.body.password) {
     const hashPassword = await bcrypt.hash(req.body.password, 10);
     req.body.password = hashPassword;
+  }
+
+  const existEmail = await User.findOne({ email: req.body.email });
+
+  if (existEmail) {
+    throw HttpError(409, "Email already in use");
   }
 
   const user = await User.findOneAndUpdate(_id, req.body, {
