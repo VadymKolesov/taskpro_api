@@ -44,7 +44,7 @@ export const updateUser = controllerDecorator(async (req, res) => {
 
   const existUser = await User.findOne({ email: req.body.email });
 
-  if (existUser && existUser._id !== req.user._id) {
+  if (existUser && existUser._id.toString() !== _id.toString()) {
     throw HttpError(409, "Email already in use");
   }
 
