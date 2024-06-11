@@ -42,9 +42,9 @@ export const updateUser = controllerDecorator(async (req, res) => {
     req.body.password = hashPassword;
   }
 
-  const existEmail = await User.findOne({ email: req.body.email });
+  const existUser = await User.findOne({ email: req.body.email });
 
-  if (existEmail) {
+  if (existUser && existUser._id !== req.user.email) {
     throw HttpError(409, "Email already in use");
   }
 
