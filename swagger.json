@@ -1049,7 +1049,7 @@
       },
       "CreateBoardRequest": {
         "type": "object",
-        "required": ["name", "iconName", "backgroundUrl"],
+        "required": ["name", "iconName", "backgroundName"],
         "properties": {
           "name": {
             "type": "string",
@@ -1071,65 +1071,45 @@
             "description": "The name of the icon attached to the board",
             "format": "icon-project-1"
           },
-          "backgroundUrl": {
+          "backgroundName": {
             "type": "string",
-            "description": "Board's Background",
-            "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
+            "description": "Board's Background number",
+            "example": "1"
           }
         }
       },
       "CreateBoardResponse": {
         "type": "object",
         "properties": {
-          "type": "object",
-          "properties": {
-            "_id": {
-              "type": "string",
-              "description": "Board's id",
-              "example": "666441ca47f3118ab3b584c9"
-            },
-            "name": {
-              "type": "string",
-              "description": "Board's name",
-              "example": "My board"
-            },
-            "iconName": {
-              "type": "string",
-              "enum": [
-                "icon-project-1",
-                "icon-project-2",
-                "icon-project-3",
-                "icon-project-4",
-                "icon-project-5",
-                "icon-project-6",
-                "icon-project-7",
-                "icon-project-8"
-              ],
-              "description": "The name of the icon attached to the board",
-              "example": "icon-project-5"
-            },
-            "backgroundUrl": {
-              "type": "string",
-              "description": "Board's Background",
-              "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
-            },
-            "owner": {
-              "type": "string",
-              "description": "User's id attached to the board",
-              "example": "666360f436afcfb89fea6e15"
-            },
-            "createdAt": {
-              "type": "string",
-              "description": "Crated at time",
-              "format": "date-time",
-              "example": "2024-06-08T11:34:34.329Z"
-            },
-            "updatedAt": {
-              "type": "string",
-              "description": "Updated at time",
-              "format": "date-time",
-              "example": "2024-06-08T11:34:34.329Z"
-            }
+          "_id": {
+            "type": "string",
+            "description": "Board's id",
+            "example": "666441ca47f3118ab3b584c9"
+          },
+          "name": {
+            "type": "string",
+            "description": "Board's name",
+            "example": "My board"
+          },
+          "iconName": {
+            "type": "string",
+            "enum": [
+              "icon-project-1",
+              "icon-project-2",
+              "icon-project-3",
+              "icon-project-4",
+              "icon-project-5",
+              "icon-project-6",
+              "icon-project-7",
+              "icon-project-8"
+            ],
+            "description": "The name of the icon attached to the board",
+            "example": "icon-project-5"
+          },
+          "backgroundName": {
+            "type": "string",
+            "description": "Board's Background",
+            "example": "1"
           }
         }
       },
@@ -1153,27 +1133,10 @@
               "description": "The name of the icon attached to the board",
               "example": "icon-project-5"
             },
-            "backgroundUrl": {
+            "backgroundName": {
               "type": "string",
               "description": "Board's Background",
-              "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
-            },
-            "owner": {
-              "type": "string",
-              "description": "User's id attached to the board",
-              "example": "666360f436afcfb89fea6e15"
-            },
-            "createdAt": {
-              "type": "string",
-              "description": "Crated at time",
-              "format": "date-time",
-              "example": "2024-06-08T11:34:34.329Z"
-            },
-            "updatedAt": {
-              "type": "string",
-              "description": "Updated at time",
-              "format": "date-time",
-              "example": "2024-06-08T11:34:34.329Z"
+              "example": "1"
             }
           }
         }
@@ -1209,27 +1172,10 @@
                 "description": "The name of the icon attached to the board",
                 "example": "icon-project-5"
               },
-              "backgroundUrl": {
+              "backgroundName": {
                 "type": "string",
                 "description": "Board's Background",
-                "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
-              },
-              "owner": {
-                "type": "string",
-                "description": "User's id attached to the board",
-                "example": "666360f436afcfb89fea6e15"
-              },
-              "createdAt": {
-                "type": "string",
-                "description": "Crated at time",
-                "format": "date-time",
-                "example": "2024-06-08T11:34:34.329Z"
-              },
-              "updatedAt": {
-                "type": "string",
-                "description": "Updated at time",
-                "format": "date-time",
-                "example": "2024-06-08T11:34:34.329Z"
+                "example": "1"
               }
             }
           },
@@ -1252,23 +1198,6 @@
                   "type": "string",
                   "description": "ID of the board attached to the column",
                   "example": "666441ca47f3118ab3b584c9"
-                },
-                "owner": {
-                  "type": "string",
-                  "description": "User's id attached to the board",
-                  "example": "666360f436afcfb89fea6e15"
-                },
-                "createdAt": {
-                  "type": "string",
-                  "description": "Crated at time",
-                  "format": "date-time",
-                  "example": "2024-06-08T11:35:11.014Z"
-                },
-                "updatedAt": {
-                  "type": "string",
-                  "description": "Updated at time",
-                  "format": "date-time",
-                  "example": "2024-06-08T11:35:11.014Z"
                 },
                 "cards": {
                   "type": "array",
@@ -1310,23 +1239,6 @@
                         "type": "string",
                         "description": "Column id attached to the card",
                         "example": "666441ef47f3118ab3b584cf"
-                      },
-                      "owner": {
-                        "type": "string",
-                        "description": "User's id attached to the card",
-                        "example": "666360f436afcfb89fea6e15"
-                      },
-                      "createdAt": {
-                        "type": "string",
-                        "description": "Crated at time",
-                        "format": "date-time",
-                        "example": "2024-06-08T11:35:37.217Z"
-                      },
-                      "updatedAt": {
-                        "type": "string",
-                        "description": "Updated at time",
-                        "format": "date-time",
-                        "example": "2024-06-08T11:35:37.217Z"
                       }
                     }
                   }
@@ -1346,7 +1258,7 @@
             "required": ["iconName"]
           },
           {
-            "required": ["backgroundUrl"]
+            "required": ["backgroundName"]
           }
         ],
         "properties": {
@@ -1370,10 +1282,10 @@
             "description": "The name of the icon attached to the board",
             "format": "icon-project-1"
           },
-          "backgroundUrl": {
+          "backgroundName": {
             "type": "string",
             "description": "Board's Background",
-            "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
+            "example": "1"
           }
         }
       },
@@ -1405,27 +1317,10 @@
             "description": "The name of the icon attached to the board",
             "example": "icon-project-5"
           },
-          "backgroundUrl": {
+          "backgroundName": {
             "type": "string",
             "description": "Board's Background",
-            "example": "https://res.cloudinary.com/dvjg8aoza/image/upload/v1717539986/user-dark_w1uksl.png"
-          },
-          "owner": {
-            "type": "string",
-            "description": "User's id attached to the board",
-            "example": "666360f436afcfb89fea6e15"
-          },
-          "createdAt": {
-            "type": "string",
-            "description": "Crated at time",
-            "format": "date-time",
-            "example": "2024-06-08T11:34:34.329Z"
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "Updated at time",
-            "format": "date-time",
-            "example": "2024-06-08T11:34:34.329Z"
+            "example": "1"
           }
         }
       },
@@ -1467,23 +1362,6 @@
             "type": "string",
             "description": "ID of the board attached to the column",
             "example": "666441ca47f3118ab3b584c9"
-          },
-          "owner": {
-            "type": "string",
-            "description": "User's id attached to the column",
-            "example": "666360f436afcfb89fea6e15"
-          },
-          "createdAt": {
-            "type": "string",
-            "description": "Crated at time",
-            "format": "date-time",
-            "example": "2024-06-08T11:35:11.014Z"
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "Updated at time",
-            "format": "date-time",
-            "example": "2024-06-08T11:35:11.014Z"
           }
         }
       },
@@ -1552,23 +1430,6 @@
             "type": "string",
             "description": "Column id attached to the card",
             "example": "666441ef47f3118ab3b584cf"
-          },
-          "owner": {
-            "type": "string",
-            "description": "User's id attached to the card",
-            "example": "666360f436afcfb89fea6e15"
-          },
-          "createdAt": {
-            "type": "string",
-            "description": "Crated at time",
-            "format": "date-time",
-            "example": "2024-06-08T11:35:37.217Z"
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "Updated at time",
-            "format": "date-time",
-            "example": "2024-06-08T11:35:37.217Z"
           }
         }
       },
