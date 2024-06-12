@@ -20,7 +20,15 @@ export const createCard = controllerDecorator(async (req, res) => {
     columnId: req.params.id,
   }).select("_id title description priority isDone deadline columnId");
 
-  res.status(200).json(card);
+  res.status(200).json({
+    _id: card._id,
+    title: card.title,
+    description: card.description,
+    priority: card.priority,
+    isDone: card.isDone,
+    deadline: card.deadline,
+    columnId: card.columnId,
+  });
 });
 
 export const deleteCard = controllerDecorator(async (req, res) => {
