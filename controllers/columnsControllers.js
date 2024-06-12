@@ -18,9 +18,13 @@ export const createColumn = controllerDecorator(async (req, res) => {
     name: req.body.name,
     owner: req.user._id,
     boardId: req.params.id,
-  }).select("_id name boardId");
+  });
 
-  res.status(201).json(column);
+  res.status(201).json({
+    _id: column._id,
+    name: column.name,
+    boardId: column.boardId,
+  });
 });
 
 export const updateColumn = controllerDecorator(async (req, res) => {
