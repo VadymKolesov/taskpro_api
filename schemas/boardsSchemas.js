@@ -86,5 +86,5 @@ export const cardStatusSchema = Joi.object({
 });
 
 export const idSchema = Joi.object({
-  columnId: Joi.string().custom(objectIdValidator).required(),
+  columnId: Joi.string().required(),
 });
