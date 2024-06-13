@@ -18,7 +18,7 @@ export const createCard = controllerDecorator(async (req, res) => {
     ...req.body,
     owner: req.user._id,
     columnId: req.params.id,
-  }).select("_id title description priority isDone deadline columnId");
+  });
 
   res.status(200).json({
     _id: card._id,
