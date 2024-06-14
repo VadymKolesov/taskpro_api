@@ -54,5 +54,5 @@ export const deleteColumn = controllerDecorator(async (req, res) => {
   await Card.deleteMany({ columnId: req.params.id, owner: req.user._id });
   await Column.findOneAndDelete({ _id: req.params.id, owner: req.user._id });
 
-  res.status(200).json({ message: "Deleted successfully" });
+  res.status(200).json({ message: "Deleted successfully", _id: column._id });
 });

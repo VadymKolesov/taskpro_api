@@ -41,7 +41,7 @@ export const deleteCard = controllerDecorator(async (req, res) => {
     throw HttpError(404, "Card not found");
   }
 
-  res.status(200).json({ message: "Deleted successfully" });
+  res.status(200).json({ message: "Deleted successfully", _id: card._id });
 });
 
 export const updateCard = controllerDecorator(async (req, res) => {

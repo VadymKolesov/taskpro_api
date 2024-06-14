@@ -74,7 +74,7 @@ const deleteBoard = controllerDecorator(async (req, res) => {
   await Column.deleteMany({ boardId: id, owner: req.user._id });
   await Board.findOneAndDelete({ owner: req.user._id, _id: id });
 
-  res.status(200).json({ message: "Deleted successfully" });
+  res.status(200).json({ message: "Deleted successfully", _id: board._id });
 });
 
 const updateBoard = controllerDecorator(async (req, res) => {
