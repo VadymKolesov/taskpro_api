@@ -7,6 +7,7 @@ import {
   registerUser,
   getCurrentUser,
   logoutUser,
+  googleUserAuth,
 } from "../controllers/authControllers.js";
 
 const authRouter = express.Router();
@@ -18,5 +19,9 @@ authRouter.post("/register", validateBody(registerUserSchema), registerUser); //
 authRouter.post("/logout", authenticate, logoutUser); // Logout user
 
 authRouter.get("/current", authenticate, getCurrentUser); // Get current user
+
+authRouter.get('/google', passport.authenticate('google', { score: ['email', 'profile'] }));
+
+authRouter.get('/google/callback', passport.authenticate('google', { session: false }), googleUserAuth);
 
 export default authRouter;

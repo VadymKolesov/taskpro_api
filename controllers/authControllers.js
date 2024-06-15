@@ -78,3 +78,15 @@ export const getCurrentUser = controllerDecorator(async (req, res) => {
   const { email, name, avatarUrl, theme } = req.user;
   res.json({ user: { email, name, avatarUrl, theme } });
 });
+
+
+export const googleUserAuth = controllerDecorator( async (req, res) => {
+  const { _id: id } = req.user;
+  const payload = { id };
+
+  const token = jwt.sign(payload, JWT_SECRET_KEY, { expiresIn: '2h' });
+  const refreshToken = jwt.sign(payload, REFRESH_SECRET_KEY, { expiresIn: '10d' });
+  await User.findByIdAndUpdate(id, { token, refreshToken });
+
+  res.redirect(`${BASE_URL}?token=${token}&refreshToken=${refreshToken}`);
+});
