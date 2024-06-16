@@ -62,7 +62,7 @@ export const updateCardsList = controllerDecorator(async (req, res) => {
 
   const column = await Column.findOneAndUpdate(
     { _id: req.params.id, owner: req.user._id },
-    cards,
+    { cards },
     { new: true }
   ).select("_id name boardId");
 
