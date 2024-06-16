@@ -20,6 +20,8 @@ export const createCard = controllerDecorator(async (req, res) => {
     columnId: req.params.id,
   });
 
+  await Column.findByIdAndUpdate(column._id, { $push: { cards: card._id } });
+
   res.status(200).json({
     _id: card._id,
     title: card.title,
@@ -40,6 +42,11 @@ export const deleteCard = controllerDecorator(async (req, res) => {
   if (!card) {
     throw HttpError(404, "Card not found");
   }
+
+  await Column.findOneAndUpdate(
+    { cards: req.params.id },
+    { $pull: { cards: req.params.id } }
+  );
 
   res.status(200).json({ message: "Deleted successfully", _id: card._id });
 });
@@ -90,11 +97,15 @@ export const updateCardColumn = controllerDecorator(async (req, res, next) => {
     { _id: id, owner: _id },
     { columnId },
     { new: true }
-  ).select("_id title description priority isDone deadline columnId");
+  ).select("_id title description priority isDone deadline columnId cards");
 
   if (!card) {
     throw HttpError(404, "Card not found");
   }
+
+  await Column.findOneAndUpdate({ cards: id }, { $pull: { cards: id } });
+
+  await Column.findByIdAndUpdate(columnId, { $push: { cards: id } });
 
   res.status(200).json(card);
 });

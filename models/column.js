@@ -11,6 +11,15 @@ const columnSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "board",
     },
+    cards: {
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "card",
+        },
+      ],
+      default: [],
+    },
     owner: {
       type: Schema.Types.ObjectId,
       ref: "user",
