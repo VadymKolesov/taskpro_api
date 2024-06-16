@@ -7,8 +7,9 @@ export const needHelp = Joi.object({
     "string.pattern.base": "Invalid email format",
     "any.required": "Email is required",
   }),
-  comment: Joi.string().max(100).required().messages({
-    "string.min": "Comment must contain less than 100 characters",
+  comment: Joi.string().min(15).max(500).required().messages({
+    "string.min": "Comment must contain at least 15 characters",
+    "string.max": "Comment must contain less than 500 characters",
     "any.required": "Comment is required",
   }),
 });
