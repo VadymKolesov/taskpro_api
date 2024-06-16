@@ -7,6 +7,8 @@ import {
   registerUser,
   getCurrentUser,
   logoutUser,
+  googleAuth,
+  googleRedirect,
 } from "../controllers/authControllers.js";
 
 const authRouter = express.Router();
@@ -18,5 +20,9 @@ authRouter.post("/register", validateBody(registerUserSchema), registerUser); //
 authRouter.post("/logout", authenticate, logoutUser); // Logout user
 
 authRouter.get("/current", authenticate, getCurrentUser); // Get current user
+
+authRouter.get("/google", googleAuth)
+
+authRouter.get("/google-redirect", googleRedirect)
 
 export default authRouter;
