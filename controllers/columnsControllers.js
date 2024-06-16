@@ -64,7 +64,7 @@ export const updateCardsList = controllerDecorator(async (req, res) => {
     { _id: req.params.id, owner: req.user._id },
     { cards },
     { new: true }
-  ).select("_id name boardId");
+  ).select("_id name boardId cards");
 
   if (!column) {
     throw HttpError(404, "Column not found");
