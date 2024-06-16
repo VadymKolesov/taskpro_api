@@ -88,3 +88,7 @@ export const cardStatusSchema = Joi.object({
 export const idSchema = Joi.object({
   columnId: Joi.string().required(),
 });
+
+export const cardsListSchema = Joi.object({
+  cards: Joi.array().items(Joi.string()).required("Cards is required"),
+});

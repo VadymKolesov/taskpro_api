@@ -2,12 +2,13 @@ import express from "express";
 import authenticate from "../middlewares/authenticate.js";
 import isValidId from "../middlewares/isValidId.js";
 import validateBody from "../middlewares/validateBody.js";
-import { columnSchema } from "../schemas/boardsSchemas.js";
+import { columnSchema, cardsListSchema } from "../schemas/boardsSchemas.js";
 
 import {
   createColumn,
   updateColumn,
   deleteColumn,
+  updateCardsList,
 } from "../controllers/columnsControllers.js";
 
 const columnsRouter = express.Router();
@@ -29,5 +30,13 @@ columnsRouter.patch(
 ); // Update column name
 
 columnsRouter.delete("/:id", authenticate, isValidId, deleteColumn); // Delete column (and its cards) by columnId and owner
+
+columnsRouter.put(
+  "/:id",
+  authenticate,
+  isValidId,
+  validateBody(cardsListSchema),
+  updateCardsList
+);
 
 export default columnsRouter;

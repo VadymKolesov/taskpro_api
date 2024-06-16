@@ -38,23 +38,37 @@ const getBoardDetails = controllerDecorator(async (req, res) => {
     throw HttpError(404, "Board not found");
   }
 
-  const data = await Column.find({
+  const columns = await Column.find({
     owner: req.user._id,
     boardId: board._id,
-  }).select("_id name boardId");
+  }).select("_id name boardId cards");
 
-  const promises = data.map(async (column) => {
-    const plainColumn = column.toObject();
-    const cards = await Card.find({ columnId: column._id }).select(
-      "_id title description priority isDone deadline columnId"
+  const populateCards = async () => {
+    const populatedColumns = await Promise.all(
+      columns.map(async (column) => {
+        const populatedColumn = column.toObject();
+
+        const allCards = await Card.find({ columnId: column._id }).select(
+          "_id title description priority isDone deadline columnId"
+        );
+
+        const populatedCards = populatedColumn.cards.map((cardId) => {
+          const foundCard = allCards.find((card) => card._id.equals(cardId));
+          return foundCard;
+        });
+
+        populatedColumn.cards = populatedCards;
+
+        return populatedColumn;
+      })
     );
 
-    plainColumn.cards = cards;
-    return plainColumn;
-  });
+    return populatedColumns;
+  };
 
-  const columns = await Promise.all(promises);
-  res.status(200).json({ board, columns });
+  const populatedColumns = await populateCards();
+
+  res.status(200).json({ board, columns: populatedColumns });
 });
 
 const deleteBoard = controllerDecorator(async (req, res) => {
