@@ -56,3 +56,19 @@ export const deleteColumn = controllerDecorator(async (req, res) => {
 
   res.status(200).json({ message: "Deleted successfully", _id: column._id });
 });
+
+export const updateCardsList = controllerDecorator(async (req, res) => {
+  const { cards } = req.body;
+
+  const column = await Column.findOneAndUpdate(
+    { _id: req.params.id, owner: req.user._id },
+    cards,
+    { new: true }
+  ).select("_id name boardId");
+
+  if (!column) {
+    throw HttpError(404, "Column not found");
+  }
+
+  res.status(200).json(column);
+});
