@@ -64,7 +64,7 @@ export const verifyEmail = controllerDecorator(async (req, res) => {
 
   if (!user) throw HttpError(404, "User not found");
 
-  const token = jwt.sign({ id: existUser._id }, process.env.SECRET_KEY, {
+  const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, {
     expiresIn: "48h",
   });
 
