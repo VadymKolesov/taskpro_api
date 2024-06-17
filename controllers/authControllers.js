@@ -6,6 +6,8 @@ import jwt from "jsonwebtoken";
 import axios from "axios";
 import queryString from "query-string";
 import { nanoid } from "nanoid";
+import mail from "../helpers/sendEmail.js"
+import createVerificatinEmail from "../helpers/verifyEmail.js"
 
 export const registerUser = controllerDecorator(async (req, res) => {
   const { email, password, name } = req.body;
@@ -17,12 +19,18 @@ export const registerUser = controllerDecorator(async (req, res) => {
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
+  const verificationToken = nanoid();
 
   const newUser = await User.create({
     email: emailInToLowerCase,
     password: passwordHash,
     name,
+    verificationToken, 
   });
+
+  const verifyEmail = createVerificatinEmail(emailInToLowerCase, verificationToken);
+
+  await mail.sendMail(verifyEmail);
 
   res.status(201).json({
     user: {
@@ -34,6 +42,39 @@ export const registerUser = controllerDecorator(async (req, res) => {
   });
 });
 
+export const verifyEmail = controllerDecorator(async (req, res) =>{
+  const {verificationToken} = req.params;  
+        const user = await User.findOne({verificationToken});
+
+        if(!user) throw HttpError(404, "User not found")   
+
+        await User.findByIdAndUpdate(user._id, {verify: true, verificationToken: null}, {new: true}); 
+
+        res.status(200).json({
+            message: "Verification successful" });
+});
+
+export const resendVerifyEmail = controllerDecorator(async (req, res) =>{
+  const {email} = req.body;  
+  const user = await User.findOne({email}); 
+
+  if(!email){
+    throw HttpError(400, "missing required field email");
+  } 
+  if(!user){
+    throw HttpError(401, "email not foun")  
+  } 
+  if(user.verify){
+    throw HttpError(400, "Verification has already been passed") 
+  } 
+
+  const verifyEmail = createVerificatinEmail(emailInToLowerCase, verificationToken);
+
+  await mail.sendMail(verifyEmail);
+
+  res.json({ message: "verify email verify success"  })
+});
+
 export const loginUser = controllerDecorator(async (req, res) => {
   const { email, password } = req.body;
   const emailInToLowerCase = email.toLowerCase();
@@ -42,6 +83,10 @@ export const loginUser = controllerDecorator(async (req, res) => {
   if (!existUser) {
     throw HttpError(401, "Email or password is wrong");
   }
+
+  if(!existUser.verify) {
+    throw HttpError(400, "Please verify your email")
+}
 
   const isMatch = await bcrypt.compare(password, existUser.password);
   if (!isMatch) {
