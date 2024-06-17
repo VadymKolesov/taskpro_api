@@ -1,7 +1,11 @@
 import express from "express";
 import authenticate from "../middlewares/authenticate.js";
 import validateBody from "../middlewares/validateBody.js";
-import { registerUserSchema, loginUserSchema } from "../schemas/authSchemas.js";
+import {
+  registerUserSchema,
+  loginUserSchema,
+  emailSchema,
+} from "../schemas/authSchemas.js";
 import {
   loginUser,
   registerUser,
@@ -11,7 +15,6 @@ import {
   googleRedirect,
   verifyEmail,
   resendVerifyEmail,
-  emailSchema,
 } from "../controllers/authControllers.js";
 
 const authRouter = express.Router();
