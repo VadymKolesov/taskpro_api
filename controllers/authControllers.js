@@ -84,23 +84,22 @@ export const resendVerifyEmail = controllerDecorator(async (req, res) => {
   const user = await User.findOne({ email });
 
   if (!email) {
-    throw HttpError(400, "missing required field email");
+    throw HttpError(400, "Email is required");
   }
   if (!user) {
-    throw HttpError(401, "email not foun");
+    throw HttpError(404, "User not found");
   }
   if (user.verify) {
-    throw HttpError(400, "Verification has already been passed");
+    throw HttpError(409, "Verification has already been passed");
   }
 
-  const verifyEmail = createVerificatinEmail(
-    emailInToLowerCase,
-    verificationToken
-  );
+  try {
+    await sendMail(message(email, user.name, user.verificationToken));
+  } catch (error) {
+    throw HttpError(500, error);
+  }
 
-  await mail.sendMail(verifyEmail);
-
-  res.json({ message: "verify email verify success" });
+  res.json({ message: "Verify email sent" });
 });
 
 export const loginUser = controllerDecorator(async (req, res) => {

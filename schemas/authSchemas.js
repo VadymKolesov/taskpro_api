@@ -25,3 +25,10 @@ export const loginUserSchema = Joi.object({
     "any.required": "Password is required",
   }),
 });
+
+export const emailSchema = Joi.object({
+  email: Joi.string().pattern(emailRegex).required().messages({
+    "string.pattern.base": "Invalid email format",
+    "any.required": "Email is required",
+  }),
+});

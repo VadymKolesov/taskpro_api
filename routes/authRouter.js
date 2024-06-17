@@ -11,6 +11,7 @@ import {
   googleRedirect,
   verifyEmail,
   resendVerifyEmail,
+  emailSchema,
 } from "../controllers/authControllers.js";
 
 const authRouter = express.Router();
@@ -29,6 +30,6 @@ authRouter.get("/google-redirect", googleRedirect);
 
 authRouter.get("/verify/:verificationToken", verifyEmail);
 
-authRouter.post("/verify", validateBody(loginUserSchema), resendVerifyEmail);
+authRouter.post("/verify", validateBody(emailSchema), resendVerifyEmail);
 
 export default authRouter;
