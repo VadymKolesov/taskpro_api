@@ -40,12 +40,23 @@ const userSchema = new Schema(
       required: [true, "Password is required"],
       minlength: 8,
     },
+    verify: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: {
+      type: String,
+      default: [true, 'Verify token is required'],
+    },
   },
-  { versionKey: false, timestamps: true }
+  { versionKey: false, timestamps: true },
+
+  
 );
 
 userSchema.post("save", handleMongooseError);
 
 const User = model("user", userSchema);
+
 
 export default User;

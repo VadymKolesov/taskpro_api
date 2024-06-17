@@ -9,6 +9,8 @@ import {
   logoutUser,
   googleAuth,
   googleRedirect,
+  verifyEmail,
+  resendVerifyEmail,
 } from "../controllers/authControllers.js";
 
 const authRouter = express.Router();
@@ -21,8 +23,12 @@ authRouter.post("/logout", authenticate, logoutUser); // Logout user
 
 authRouter.get("/current", authenticate, getCurrentUser); // Get current user
 
-authRouter.get("/google", googleAuth)
+authRouter.get("/google", googleAuth);
 
-authRouter.get("/google-redirect", googleRedirect)
+authRouter.get("/google-redirect", googleRedirect);
+
+authRouter.get("/verify/:verificationToken", verifyEmail);
+
+authRouter.post("/verify", validateBody(loginUserSchema), resendVerifyEmail);
 
 export default authRouter;

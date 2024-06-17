@@ -6,6 +6,22 @@ import jwt from "jsonwebtoken";
 import axios from "axios";
 import queryString from "query-string";
 import { nanoid } from "nanoid";
+import mail from "../helpers/sendEmail.js";
+import createVerificatinEmail from "../helpers/verifyEmail.js";
+import sendMail from "../helpers/sendEmailOAuth2.js";
+import HTMLMail from "../helpers/HTMLMail.js";
+
+const { BASE_URL, APLICATION_EMAIL } = process.env;
+
+const message = (userEmail, userName, verificationToken) => {
+  return {
+    from: APLICATION_EMAIL,
+    to: userEmail,
+    subject: "Welcome to Taskpro!",
+    html: HTMLMail(BASE_URL, userName, verificationToken),
+    text: `To verify your email please open the link ${BASE_URL}/api/auth/verify/${verificationToken}`,
+  };
+};
 
 export const registerUser = controllerDecorator(async (req, res) => {
   const { email, password, name } = req.body;
@@ -17,21 +33,74 @@ export const registerUser = controllerDecorator(async (req, res) => {
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
+  const verificationToken = nanoid();
 
-  const newUser = await User.create({
+  await User.create({
     email: emailInToLowerCase,
     password: passwordHash,
     name,
+    verificationToken,
   });
 
+  try {
+    await sendMail(message(email, name, verificationToken));
+  } catch (error) {
+    throw HttpError(500, error);
+  }
+
   res.status(201).json({
-    user: {
-      email: newUser.email,
-      theme: newUser.theme,
-      name: newUser.name,
-      avatarUrl: newUser.avatarUrl,
-    },
+    message: "Register successfully",
   });
+});
+
+export const verifyEmail = controllerDecorator(async (req, res) => {
+  const { verificationToken } = req.params;
+
+  if (!verificationToken) {
+    throw HttpError(400);
+  }
+
+  const user = await User.findOne({ verificationToken });
+
+  if (!user) throw HttpError(404, "User not found");
+
+  const token = jwt.sign({ id: existUser._id }, process.env.SECRET_KEY, {
+    expiresIn: "48h",
+  });
+
+  await User.findByIdAndUpdate(user._id, {
+    verify: true,
+    verificationToken: null,
+    token,
+  });
+
+  return res.redirect(
+    `${process.env.FRONTEND_URL}/google-redirect?token=${token}`
+  );
+});
+
+export const resendVerifyEmail = controllerDecorator(async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+
+  if (!email) {
+    throw HttpError(400, "missing required field email");
+  }
+  if (!user) {
+    throw HttpError(401, "email not foun");
+  }
+  if (user.verify) {
+    throw HttpError(400, "Verification has already been passed");
+  }
+
+  const verifyEmail = createVerificatinEmail(
+    emailInToLowerCase,
+    verificationToken
+  );
+
+  await mail.sendMail(verifyEmail);
+
+  res.json({ message: "verify email verify success" });
 });
 
 export const loginUser = controllerDecorator(async (req, res) => {
@@ -41,6 +110,10 @@ export const loginUser = controllerDecorator(async (req, res) => {
 
   if (!existUser) {
     throw HttpError(401, "Email or password is wrong");
+  }
+
+  if (!existUser.verify) {
+    throw HttpError(400, "Please verify your email");
   }
 
   const isMatch = await bcrypt.compare(password, existUser.password);
