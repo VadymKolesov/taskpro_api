@@ -73,6 +73,10 @@ export const verifyEmail = controllerDecorator(async (req, res) => {
 
   if (!user) throw HttpError(404, "User not found");
 
+  if (user.verify) {
+    throw HttpError(409, "Verification has already been passed");
+  }
+
   const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, {
     expiresIn: "48h",
   });
@@ -93,7 +97,7 @@ export const resendVerifyEmail = controllerDecorator(async (req, res) => {
   const user = await User.findOne({ email });
 
   if (!email) {
-    throw HttpError(400, "Email is required");
+    throw HttpError(400, "Bad request");
   }
   if (!user) {
     throw HttpError(404, "User not found");
@@ -108,7 +112,7 @@ export const resendVerifyEmail = controllerDecorator(async (req, res) => {
     throw HttpError(500, error);
   }
 
-  res.json({ message: "Verify email sent" });
+  res.status(200).json({ message: "Verify email sent" });
 });
 
 export const loginUser = controllerDecorator(async (req, res) => {

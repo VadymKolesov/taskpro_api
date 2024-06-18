@@ -28,6 +28,10 @@
     {
       "name": "Cards",
       "description": "Cards endpoints"
+    },
+    {
+      "name": "Need Help",
+      "description": "Need Help endpoints"
     }
   ],
   "paths": {
@@ -139,6 +143,78 @@
             "description": "Unauthorized"
           }
         }
+      }
+    },
+    "api/auth/verify/:verificationToken": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Verify user's email",
+        "parameters": [
+          {
+            "name": "verificationToken",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Verification token"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "409": {
+            "description": "Verification has already been passed"
+          }
+        }
+      }
+    },
+    "api/auth/verify": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Resend verify email",
+        "requestBody": {
+          "description": "Resend verify email request body",
+          "required": "true",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResendVerifyEmailRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResendVerifyEmailResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "409": {
+            "description": "Verification has already been passed"
+          }
+        }
+      }
+    },
+    "api/auth/google": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Link to authorize with google"
       }
     },
     "api/users": {
@@ -802,6 +878,42 @@
           }
         }
       }
+    },
+    "api/help": {
+      "post": {
+        "tags": ["Need Help"],
+        "summary": "Send message to Taskpro Help Center",
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Need Help request body",
+          "required": "true",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NeedHelpRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NeedHelpResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1362,6 +1474,15 @@
             "type": "string",
             "description": "ID of the board attached to the column",
             "example": "666441ca47f3118ab3b584c9"
+          },
+          "cards": {
+            "type": "array",
+            "description": "ID of the board attached to the column",
+            "items": {
+              "type": "string",
+              "description": "Card's id",
+              "example": "6664420947f3118ab3b584d3"
+            }
           }
         }
       },
@@ -1452,6 +1573,51 @@
             "type": "string",
             "description": "Column id attached to the card",
             "example": "666441ef47f3118ab3b584cf"
+          }
+        }
+      },
+      "NeedHelpRequest": {
+        "type": "object",
+        "required": ["email", "comment"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Customer's email",
+            "example": "customer@example.com"
+          },
+          "comment": {
+            "type": "string",
+            "description": "Customer's message",
+            "example": "Taskpro is awesome!"
+          }
+        }
+      },
+      "NeedHelpResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Message sent"
+          }
+        }
+      },
+      "ResendVerifyEmailRequest": {
+        "type": "object",
+        "required": ["email"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Customer's email",
+            "example": "customer@example.com"
+          }
+        }
+      },
+      "ResendVerifyEmailResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Verify email sent"
           }
         }
       }

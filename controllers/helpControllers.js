@@ -42,6 +42,6 @@ export const sendHelpEmails = async (req, res) => {
   }
 
   res.status(200).json({
-    message: "Comment sent",
+    message: "Message sent",
   });
 };
