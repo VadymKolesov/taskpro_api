@@ -221,10 +221,13 @@ export const googleRedirect = controllerDecorator(async (req, res) => {
     );
   }
 
+  const verificationToken = nanoid();
+
   const newUser = await User.create({
     email: userEmail,
     password: nanoid(),
     name: userName,
+    verificationToken,
   });
 
   const token = jwt.sign({ id: newUser._id }, process.env.SECRET_KEY, {
