@@ -1,8 +1,7 @@
-import nodemailer from "nodemailer";
 import HTMLHelpMail from "../helpers/HTMLHelpMail.js";
 import HTMLHelpMailCustomer from "../helpers/HTMLHelpMailCustomer.js";
 import sendMail from "../helpers/sendEmailOAuth2.js";
-import HttpError from "../helpers/HttpError";
+import HttpError from "../helpers/HttpError.js";
 
 const { APLICATION_EMAIL } = process.env;
 
