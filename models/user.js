@@ -46,17 +46,13 @@ const userSchema = new Schema(
     },
     verificationToken: {
       type: String,
-      default: [true, 'Verify token is required'],
     },
   },
-  { versionKey: false, timestamps: true },
-
-  
+  { versionKey: false, timestamps: true }
 );
 
 userSchema.post("save", handleMongooseError);
 
 const User = model("user", userSchema);
-
 
 export default User;
