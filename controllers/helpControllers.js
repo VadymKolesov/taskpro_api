@@ -26,7 +26,7 @@ const messageForCustomer = (userEmail, userComment) => {
   };
 };
 
-export const sendMail = async (req, res) => {
+export const sendHelpEmails = async (req, res) => {
   const userComment = req.body.comment;
   const userEmail = req.body.email;
 
