@@ -6,10 +6,9 @@ import jwt from "jsonwebtoken";
 import axios from "axios";
 import queryString from "query-string";
 import { nanoid } from "nanoid";
-import mail from "../helpers/sendEmail.js";
-import createVerificatinEmail from "../helpers/verifyEmail.js";
 import sendMail from "../helpers/sendEmailOAuth2.js";
 import HTMLMail from "../helpers/HTMLMail.js";
+import HTMLGoogleRegMail from "../helpers/HTMLGoogleRegMail.js";
 
 const { BASE_URL, APLICATION_EMAIL } = process.env;
 
@@ -20,6 +19,16 @@ const message = (userEmail, userName, verificationToken) => {
     subject: "Welcome to Taskpro!",
     html: HTMLMail(BASE_URL, userName, verificationToken),
     text: `To verify your email please open the link ${BASE_URL}/api/auth/verify/${verificationToken}`,
+  };
+};
+
+const googleMessage = (userEmail, userName) => {
+  return {
+    from: APLICATION_EMAIL,
+    to: userEmail,
+    subject: "Welcome to Taskpro!",
+    html: HTMLGoogleRegMail(userName),
+    text: `Thank you for registering with our application. We hope our services will help you organise your work and increase your productivity. If you still have any questions, you can always ask them using a special form in the Taskpro app. So, let's get to the top, shall we?`,
   };
 };
 
@@ -223,6 +232,8 @@ export const googleRedirect = controllerDecorator(async (req, res) => {
   });
 
   await User.findByIdAndUpdate(newUser._id, { token });
+
+  await sendMail(googleMessage(userEmail, userName));
 
   return res.redirect(
     `${process.env.FRONTEND_URL}/google-redirect?token=${token}`
